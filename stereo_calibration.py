@@ -48,9 +48,9 @@ for imgLeft, imgRight in zip(imagesLeft, imagesRight):
 
         # Draw and display the corners
         cv.drawChessboardCorners(imgL, chessboardSize, cornersL, retL)
-        cv.imshow('img left', imgL)
+        cv.imshow('Img_Left', imgL)
         cv.drawChessboardCorners(imgR, chessboardSize, cornersR, retR)
-        cv.imshow('img right', imgR)
+        cv.imshow('Img_Right', imgR)
         cv.waitKey(1000)
 
 cv.destroyAllWindows()
