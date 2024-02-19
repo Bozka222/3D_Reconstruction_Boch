@@ -57,6 +57,7 @@ cv.destroyAllWindows()
 
 # ---------------------- # CALIBRATION - GET ALL PARAMETERS # ---------------------- #
 
+# Returns RMSE(Per pixel projection error, Intrinsic matrix, Distortion coefficients, Rotation vector and Translation vector)
 retL, cameraMatrixL, distL, rvecsL, tvecsL = cv.calibrateCamera(objpoints, imgpointsL, frameSize, None, None)
 heightL, widthL, channelsL = imgL.shape
 newCameraMatrixL, roi_L = cv.getOptimalNewCameraMatrix(cameraMatrixL, distL, (widthL, heightL), 1, (widthL, heightL))
@@ -64,6 +65,9 @@ newCameraMatrixL, roi_L = cv.getOptimalNewCameraMatrix(cameraMatrixL, distL, (wi
 retR, cameraMatrixR, distR, rvecsR, tvecsR = cv.calibrateCamera(objpoints, imgpointsR, frameSize, None, None)
 heightR, widthR, channelsR = imgR.shape
 newCameraMatrixR, roi_R = cv.getOptimalNewCameraMatrix(cameraMatrixR, distR, (widthR, heightR), 1, (widthR, heightR))
+print(f"Projection Error - Single Camera Calibration:\n"
+      f"Left Camera: {retL}\n"
+      f"Right Camera: {retR}")
 
 # ---------------------- # STEREO VISION CALIBRATION # ---------------------- #
 
@@ -76,20 +80,16 @@ criteria_stereo = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
 # This step is performed to transformation between the two cameras and calculate Essential and Fundamental matrix
 retStereo, newCameraMatrixL, distL, newCameraMatrixR, distR, rot, trans, essentialMatrix, fundamentalMatrix = (cv.stereoCalibrate(objpoints, imgpointsL, imgpointsR, newCameraMatrixL, distL, newCameraMatrixR, distR, grayL.shape[::-1], criteria_stereo, flags))
-
-mean_error_l = 0
-for i in range(len(objpoints)):
-    imgpoints2, _ = cv.projectPoints(objpoints[i], rvecsL[i], tvecsL[i], cameraMatrixL, distL)
-    error_l = cv.norm(imgpointsL[i], imgpoints2, cv.NORM_L2)/len(imgpoints2)
-    mean_error_l += error_l
-print("total left error: {}".format(mean_error_l/len(objpoints)))
-
-mean_error_r = 0
-for i in range(len(objpoints)):
-    imgpoints2, _ = cv.projectPoints(objpoints[i], rvecsR[i], tvecsR[i], cameraMatrixR, distR)
-    error_r = cv.norm(imgpointsR[i], imgpoints2, cv.NORM_L2)/len(imgpoints2)
-    mean_error_r += error_r
-print("total right error: {}".format(mean_error_r/len(objpoints)))
+print(f"Stereo Calibration Parameters:\n"
+      f"Projection Error: {retStereo}\n"
+      f"LCameraIntrinsic:\n{newCameraMatrixL}\n"
+      f"RCameraIntrinsic:\n{newCameraMatrixR}\n"
+      f"Rotation:\n{rot}\n"
+      f"Translation:\n{trans}\n"
+      f"EssentialMatrix:\n{essentialMatrix}\n"
+      f"FundamentalMatrix:\n{fundamentalMatrix}\n"
+      f"DistanceL:{distL}\n"
+      f"DistanceR:{distR}\n")
 
 # ---------------------- # STEREO RECTIFICATION # ---------------------- #
 

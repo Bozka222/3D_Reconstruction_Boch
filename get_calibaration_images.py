@@ -25,21 +25,23 @@ while cap.isOpened():
     success, img = cap.read()
     # new_img = cv2.resize(img, (1280, 720))
     cropped_img = img[0:720, 0:1280]
+    rotated_image_R = cv2.rotate(cropped_img, cv2.ROTATE_90_CLOCKWISE)
+    rotated_image_L = cv2.rotate(color_image, cv2.ROTATE_90_CLOCKWISE)
 
     k = cv2.waitKey(5)
 
     if k == 27:
         break
     elif k == ord('s'):  # wait for 's' key to save and exit
-        cv2.imwrite('Data/Input/Camera_Calibration_Images/stereoLeft/imageL' + str(num) + '.png', color_image)
-        cv2.imwrite('Data/Input/Camera_Calibration_Images/stereoRight/imageR' + str(num) + '.png', cropped_img)
-        # cv2.imwrite('Data/Input/Deformed/imageL' + str(num) + '.png', color_image)
-        # cv2.imwrite('Data/Input/Deformed/imageR' + str(num) + '.png', cropped_img)
+        cv2.imwrite('Data/Input/Camera_Calibration_Images/stereoLeft/imageL' + str(num) + '.png', rotated_image_L)
+        cv2.imwrite('Data/Input/Camera_Calibration_Images/stereoRight/imageR' + str(num) + '.png', rotated_image_R)
+        # cv2.imwrite('Data/Input/Deformed/imageL' + str(num) + '.png', rotated_image_L)
+        # cv2.imwrite('Data/Input/Deformed/imageR' + str(num) + '.png', rotated_image_R)
         print("images saved!")
         num += 1
 
-    cv2.imshow('stereoLeft', color_image)
-    cv2.imshow('stereoRight', cropped_img)
+    cv2.imshow('stereoLeft', rotated_image_L)
+    cv2.imshow('stereoRight', rotated_image_R)
 
 # Release and destroy all windows before termination
 cap.release()
