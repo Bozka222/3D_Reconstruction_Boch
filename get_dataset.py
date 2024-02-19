@@ -31,9 +31,10 @@ color_sensor = profile.get_device().query_sensors()[1]
 color_sensor.set_option(rs.option.global_time_enabled, 1)
 color_sensor.set_option(rs.option.enable_auto_exposure, 0)
 
-vid = cv2.VideoCapture(1)
+vid = cv2.VideoCapture(3, cv2.CAP_DSHOW)
 vid.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
 vid.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+vid.set(cv2.CAP_PROP_FPS, 15)
 # Create an align object
 # rs.align allows us to perform alignment of depth frames to others frames
 # The "align_to" is the stream type to which we plan to align depth frames.
@@ -61,7 +62,7 @@ while True:
     color_frame = frames.get_color_frame()
     ret, frame = vid.read()
     fps = vid.get(cv2.CAP_PROP_FPS)
-    print('Video frame rate={0}'.format(fps))
+    # print('Video frame rate={0}'.format(fps))
 
     # Validate that both frames are valid
     if not depth_frame or not color_frame:
@@ -119,9 +120,9 @@ while True:
     #     time.sleep(1)  # Wait for the color sensor
     #     i += 1
 
-    cv2.imwrite(f"Pictures/Output/Color_image/Color_image{i}.jpg", color_image)
-    cv2.imwrite(f"Pictures/Output/Depth_image/Depth_image{i}.jpg", depth_colormap)
-    cv2.imwrite(f"Pictures/Output/RGB_CAM/RGB_image{i}.jpg", frame)
+    cv2.imwrite(f"Data/Output/Color_image/Color_image{i}.jpg", color_image)
+    cv2.imwrite(f"Data/Output/Depth_image/Depth_image{i}.jpg", depth_colormap)
+    cv2.imwrite(f"Data/Output/RGB_CAM/RGB_image{i}.jpg", frame)
     i += 1
     if key == ord("\x1b"):  # End stream when pressing ESC
         cv2.destroyAllWindows()
@@ -132,10 +133,10 @@ pipeline.stop()
 vid.release()
 cv2.destroyAllWindows()
 
-with open(f"../../../../Dropbox/Diplomka/3D_Reconstruction_Boch/Pictures/Output/Metadata/metadata.txt", "w") as metadata_file_1:
+with open(f"Data/Output/Metadata/metadata_RGB.txt", "w") as metadata_file_1:
     metadata_file_1.write(json.dumps(metadata_3D))
 
-with open(f"Pictures/Output/Metadata/metadata_RGB.txt", "w") as metadata_file_2:
+with open(f"Data/Output/Metadata/metadata_RGB.txt", "w") as metadata_file_2:
     metadata_file_2.write(json.dumps(metadata_RGB))
 
 print(metadata_3D)

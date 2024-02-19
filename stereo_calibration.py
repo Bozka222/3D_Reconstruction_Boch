@@ -4,8 +4,8 @@ import glob
 
 # ---------------------- # FIND CHESSBOARD CORNERS - OBJECT POINTS AND IMAGE POINTS # ---------------------- #
 
-chessboardSize = (11, 7)  # Corners does not count
-frameSize = (1024, 576)
+chessboardSize = (7, 9)  # Corners does not count
+frameSize = (1280, 720)
 
 # termination criteria
 criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
@@ -14,7 +14,7 @@ criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 objp = np.zeros((chessboardSize[0] * chessboardSize[1], 3), np.float32)
 objp[:, :2] = np.mgrid[0:chessboardSize[0], 0:chessboardSize[1]].T.reshape(-1, 2)
 
-size_of_chessboard_squares_mm = 30  # Set size for chessboard
+size_of_chessboard_squares_mm = 20  # Set size for chessboard
 objp = objp * size_of_chessboard_squares_mm
 
 # Arrays to store object points and image points from all the images.
@@ -51,7 +51,7 @@ for imgLeft, imgRight in zip(imagesLeft, imagesRight):
         cv.imshow('Img_Left', imgL)
         cv.drawChessboardCorners(imgR, chessboardSize, cornersR, retR)
         cv.imshow('Img_Right', imgR)
-        cv.waitKey(1000)
+        cv.waitKey(2000)
 
 cv.destroyAllWindows()
 
@@ -76,6 +76,20 @@ criteria_stereo = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
 # This step is performed to transformation between the two cameras and calculate Essential and Fundamental matrix
 retStereo, newCameraMatrixL, distL, newCameraMatrixR, distR, rot, trans, essentialMatrix, fundamentalMatrix = (cv.stereoCalibrate(objpoints, imgpointsL, imgpointsR, newCameraMatrixL, distL, newCameraMatrixR, distR, grayL.shape[::-1], criteria_stereo, flags))
+
+mean_error_l = 0
+for i in range(len(objpoints)):
+    imgpoints2, _ = cv.projectPoints(objpoints[i], rvecsL[i], tvecsL[i], cameraMatrixL, distL)
+    error_l = cv.norm(imgpointsL[i], imgpoints2, cv.NORM_L2)/len(imgpoints2)
+    mean_error_l += error_l
+print("total left error: {}".format(mean_error_l/len(objpoints)))
+
+mean_error_r = 0
+for i in range(len(objpoints)):
+    imgpoints2, _ = cv.projectPoints(objpoints[i], rvecsR[i], tvecsR[i], cameraMatrixR, distR)
+    error_r = cv.norm(imgpointsR[i], imgpoints2, cv.NORM_L2)/len(imgpoints2)
+    mean_error_r += error_r
+print("total right error: {}".format(mean_error_r/len(objpoints)))
 
 # ---------------------- # STEREO RECTIFICATION # ---------------------- #
 
