@@ -9,8 +9,8 @@ stereoMapL_y = cv_file.getNode('stereoMapL_y').mat()
 stereoMapR_x = cv_file.getNode('stereoMapR_x').mat()
 stereoMapR_y = cv_file.getNode('stereoMapR_y').mat()
 
-img_left = cv2.imread('Data/Input/Deformed/imageL0.png')
-img_right = cv2.imread('Data/Input/Deformed/imageR0.png')
+img_left = cv2.imread('Data/Input/Deformed/Im_L_1.png')
+img_right = cv2.imread('Data/Input/Deformed/Im_R_1.png')
 
 # Undistorted and rectify images
 frame_right = cv2.remap(img_right, stereoMapR_x, stereoMapR_y, cv2.INTER_LANCZOS4, cv2.BORDER_CONSTANT, 0)

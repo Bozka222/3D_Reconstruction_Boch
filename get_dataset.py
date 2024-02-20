@@ -23,7 +23,7 @@ config.enable_stream(rs.stream.depth, 1280, 720, format=rs.format.z16, framerate
 profile = pipeline.start(config)
 start = time.time()
 
-# Turn-on global time, torn-off auto-exposure
+# Turn-on global time, turn-off auto-exposure
 depth_sensor = profile.get_device().query_sensors()[0]
 depth_sensor.set_option(rs.option.global_time_enabled, 1)
 depth_sensor.set_option(rs.option.enable_auto_exposure, 0)
@@ -100,29 +100,19 @@ while True:
     depth_image = np.asanyarray(depth_frame.get_data())
     color_image = np.asanyarray(color_frame.get_data())
     depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.1), cv2.COLORMAP_JET)
-    # gray_image = cv2.cvtColor(color_image, cv2.COLOR_BGR2GRAY)
 
-    # images = np.hstack((color_image, depth_colormap))
-    # Show stream with openCV
-    # camera = np.concatenate((color_image, depth_cm), axis=0)
+    rotated_depth_image = cv2.rotate(depth_colormap, cv2.ROTATE_90_CLOCKWISE)
+    rotated_color_image = cv2.rotate(color_image, cv2.ROTATE_90_CLOCKWISE)
+    rotated_RGB_image = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
 
-    # cv2.namedWindow('RealSense', cv2.WINDOW_AUTOSIZE)
-    # cv2.imshow('RealSense', images)
-    # cv2.waitKey(1)
-    cv2.imshow("RGB_Stream", color_image)
-    cv2.imshow("Depth_Stream", depth_colormap)
-    cv2.imshow('RGB_CAM', frame)
+    cv2.imshow("RGB_Stream", rotated_color_image)
+    cv2.imshow("Depth_Stream", rotated_depth_image)
+    cv2.imshow('RGB_CAM', rotated_RGB_image)
     key = cv2.waitKey(1)
 
-    # if key == ord("s"):
-
-    # if i == -1:
-    #     time.sleep(1)  # Wait for the color sensor
-    #     i += 1
-
-    cv2.imwrite(f"Data/Output/Color_image/Color_image{i}.jpg", color_image)
-    cv2.imwrite(f"Data/Output/Depth_image/Depth_image{i}.jpg", depth_colormap)
-    cv2.imwrite(f"Data/Output/RGB_CAM/RGB_image{i}.jpg", frame)
+    cv2.imwrite(f"Data/Output/Color_image/Color_image{i}.jpg", rotated_color_image)
+    cv2.imwrite(f"Data/Output/Depth_image/Depth_image{i}.jpg", rotated_depth_image)
+    cv2.imwrite(f"Data/Output/RGB_CAM/RGB_image{i}.jpg", rotated_RGB_image)
     i += 1
     if key == ord("\x1b"):  # End stream when pressing ESC
         cv2.destroyAllWindows()
