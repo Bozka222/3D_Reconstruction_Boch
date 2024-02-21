@@ -1,5 +1,6 @@
 import pyrealsense2 as rs
 import cv2 as cv
+import numpy as np
 
 # Create pipeline and config
 pipeline = rs.pipeline()
@@ -16,9 +17,11 @@ profile = pipeline.start(config)
 depth_stream = profile.get_stream(rs.stream.depth)
 intrinsic = depth_stream.as_video_stream_profile().get_intrinsics()
 print(intrinsic)
+intrinsic_mat = np.array([[intrinsic.fx, 0, intrinsic.ppx], [0, intrinsic.fy, intrinsic.ppy], [0, 0, 1]])
+print(intrinsic_mat)
 
 print("Saving parameters!")
 cv_file = cv.FileStorage('Data/Input/3D_intrinsic.xml', cv.FILE_STORAGE_WRITE)
-cv_file.write('Intrinsic', intrinsic)
+cv_file.write('Intrinsic', intrinsic_mat)
 
 cv_file.release()

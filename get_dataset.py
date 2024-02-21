@@ -99,7 +99,7 @@ while True:
     # Convert image frame to numpy array
     depth_image = np.asanyarray(depth_frame.get_data())
     color_image = np.asanyarray(color_frame.get_data())
-    depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.1), cv2.COLORMAP_JET)
+    depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.027), cv2.COLORMAP_JET)
 
     rotated_depth_image = cv2.rotate(depth_colormap, cv2.ROTATE_90_CLOCKWISE)
     rotated_color_image = cv2.rotate(color_image, cv2.ROTATE_90_CLOCKWISE)

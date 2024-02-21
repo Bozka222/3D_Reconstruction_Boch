@@ -128,7 +128,7 @@ output_points = points_3D[mask_map]
 output_colors = colors[mask_map]
 
 # Define name for output file
-output_file = 'Data/Output/3D.ply'
+output_file = 'Data/Output/PointClouds/Stereo/3D.ply'
 
 # Generate point cloud
 print("\n Creating the output file... \n")

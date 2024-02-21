@@ -57,7 +57,8 @@ cv.destroyAllWindows()
 
 # ---------------------- # CALIBRATION - GET ALL PARAMETERS # ---------------------- #
 
-# Returns RMSE(Per pixel projection error, Intrinsic matrix, Distortion coefficients, Rotation vector and Translation vector)
+# Returns RMSE(Per pixel projection error) , Intrinsic matrix, Distortion coefficients,
+# Rotation vector and Translation vector)
 retL, cameraMatrixL, distL, rvecsL, tvecsL = cv.calibrateCamera(objpoints, imgpointsL, frameSize, None, None)
 heightL, widthL, channelsL = imgL.shape
 newCameraMatrixL, roi_L = cv.getOptimalNewCameraMatrix(cameraMatrixL, distL, (widthL, heightL), 1, (widthL, heightL))
@@ -67,7 +68,9 @@ heightR, widthR, channelsR = imgR.shape
 newCameraMatrixR, roi_R = cv.getOptimalNewCameraMatrix(cameraMatrixR, distR, (widthR, heightR), 1, (widthR, heightR))
 print(f"Projection Error - Single Camera Calibration:\n"
       f"Left Camera: {retL}\n"
-      f"Right Camera: {retR}")
+      f"Right Camera: {retR}"
+      f"LCameraIntrinsic:\n{newCameraMatrixL}\n"
+      f"RCameraIntrinsic:\n{newCameraMatrixR}\n")
 
 # ---------------------- # STEREO VISION CALIBRATION # ---------------------- #
 
@@ -95,6 +98,13 @@ print(f"Stereo Calibration Parameters:\n"
 
 rectifyScale = 1
 rectL, rectR, projMatrixL, projMatrixR, Q, roi_L, roi_R = (cv.stereoRectify(newCameraMatrixL, distL, newCameraMatrixR, distR, grayL.shape[::-1], rot, trans, rectifyScale, (0, 0)))
+
+print(f"Rectification Parameters:\n"
+      f"Rotation Matrix L: {rectL}\n"
+      f"Rotation Matrix R:\n{rectR}\n"
+      f"Projection Matrix L:\n{projMatrixL}\n"
+      f"Projection Matrix R:\n{projMatrixR}\n"
+      f"Q:\n{Q}\n")
 
 stereoMapL = cv.initUndistortRectifyMap(newCameraMatrixL, distL, rectL, projMatrixL, grayL.shape[::-1], cv.CV_16SC2)
 stereoMapR = cv.initUndistortRectifyMap(newCameraMatrixR, distR, rectR, projMatrixR, grayR.shape[::-1], cv.CV_16SC2)
