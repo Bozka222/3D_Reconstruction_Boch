@@ -4,8 +4,8 @@ import glob
 
 # ---------------------- # FIND CHESSBOARD CORNERS - OBJECT POINTS AND IMAGE POINTS # ---------------------- #
 
-chessboardSize = (11, 7)  # Corners does not count
-frameSize = (1024, 576)
+chessboardSize = (7, 9)  # Corners does not count (11,7)
+frameSize = (1280, 720)  # (1024, 576)
 
 # termination criteria
 criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
@@ -14,7 +14,7 @@ criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 objp = np.zeros((chessboardSize[0] * chessboardSize[1], 3), np.float32)
 objp[:, :2] = np.mgrid[0:chessboardSize[0], 0:chessboardSize[1]].T.reshape(-1, 2)
 
-size_of_chessboard_squares_mm = 30  # Set size for chessboard
+size_of_chessboard_squares_mm = 20  # Set size for chessboard (30)
 objp = objp * size_of_chessboard_squares_mm
 
 # Arrays to store object points and image points from all the images.
@@ -22,8 +22,8 @@ objpoints = []  # 3d point in real world space
 imgpointsL = []  # 2d points in image plane.
 imgpointsR = []  # 2d points in image plane.
 
-imagesLeft = sorted(glob.glob('Data/Input/Camera_Calibration_Images/testing_chessboard/stereoLeft/*.png'))
-imagesRight = sorted(glob.glob('Data/Input/Camera_Calibration_Images/testing_chessboard/stereoRight/*.png'))
+imagesLeft = sorted(glob.glob('Data/Input/Camera_Calibration_Images/stereoLeft/*.png'))
+imagesRight = sorted(glob.glob('Data/Input/Camera_Calibration_Images/stereoRight/*.png'))
 global imgL, imgR, grayL, grayR
 
 for imgLeft, imgRight in zip(imagesLeft, imagesRight):
@@ -68,7 +68,7 @@ heightR, widthR, channelsR = imgR.shape
 newCameraMatrixR, roi_R = cv.getOptimalNewCameraMatrix(cameraMatrixR, distR, (widthR, heightR), 1, (widthR, heightR))
 print(f"Projection Error - Single Camera Calibration:\n"
       f"Left Camera: {retL}\n"
-      f"Right Camera: {retR}"
+      f"Right Camera: {retR}\n"
       f"LCameraIntrinsic:\n{newCameraMatrixL}\n"
       f"RCameraIntrinsic:\n{newCameraMatrixR}\n")
 
