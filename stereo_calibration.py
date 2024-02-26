@@ -4,7 +4,7 @@ import glob
 
 # ---------------------- # FIND CHESSBOARD CORNERS - OBJECT POINTS AND IMAGE POINTS # ---------------------- #
 
-chessboardSize = (7, 9)  # Corners does not count (11,7)
+chessboardSize = (7, 9)  # Corners does not count (11,7) Can be switched (7,11) watch out for that !!!!!
 frameSize = (1280, 720)  # (1024, 576)
 
 # termination criteria
@@ -25,6 +25,7 @@ imgpointsR = []  # 2d points in image plane.
 imagesLeft = sorted(glob.glob('Data/Input/Camera_Calibration_Images/stereoLeft/*.png'))
 imagesRight = sorted(glob.glob('Data/Input/Camera_Calibration_Images/stereoRight/*.png'))
 global imgL, imgR, grayL, grayR
+i = 0
 
 for imgLeft, imgRight in zip(imagesLeft, imagesRight):
     imgL = cv.imread(imgLeft)
@@ -39,7 +40,7 @@ for imgLeft, imgRight in zip(imagesLeft, imagesRight):
     # If found, add object points, image points (after refining them)
     if retL and retR:
         objpoints.append(objp)
-
+        # Window size is size of window around found corner in which can this corner be refined to another coordination.
         cornersL = cv.cornerSubPix(grayL, cornersL, (11, 11), (-1, -1), criteria)
         imgpointsL.append(cornersL)
 
@@ -49,9 +50,13 @@ for imgLeft, imgRight in zip(imagesLeft, imagesRight):
         # Draw and display the corners
         cv.drawChessboardCorners(imgL, chessboardSize, cornersL, retL)
         cv.imshow('Img_Left', imgL)
+        cv.imwrite(f"Data/Output/Chessboard_with_corners/Left/Img_Left_{i}.png", imgL)
         cv.drawChessboardCorners(imgR, chessboardSize, cornersR, retR)
         cv.imshow('Img_Right', imgR)
-        cv.waitKey(2000)
+        cv.imwrite(f"Data/Output/Chessboard_with_corners/Right/Img_Right_{i}.png", imgR)
+        cv.waitKey(1000)
+
+        i += 1
 
 cv.destroyAllWindows()
 
@@ -70,7 +75,9 @@ print(f"Projection Error - Single Camera Calibration:\n"
       f"Left Camera: {retL}\n"
       f"Right Camera: {retR}\n"
       f"LCameraIntrinsic:\n{newCameraMatrixL}\n"
-      f"RCameraIntrinsic:\n{newCameraMatrixR}\n")
+      f"RCameraIntrinsic:\n{newCameraMatrixR}\n"
+      f"DistortionCoefL:\n{distL}\n"
+      f"DistortionCoefR:\n{distR}\n")
 
 # ---------------------- # STEREO VISION CALIBRATION # ---------------------- #
 
@@ -91,8 +98,8 @@ print(f"Stereo Calibration Parameters:\n"
       f"Translation:\n{trans}\n"
       f"EssentialMatrix:\n{essentialMatrix}\n"
       f"FundamentalMatrix:\n{fundamentalMatrix}\n"
-      f"DistanceL:{distL}\n"
-      f"DistanceR:{distR}\n")
+      f"DistortionCoefL:{distL}\n"
+      f"DistortionCoefR:{distR}\n")
 
 # ---------------------- # STEREO RECTIFICATION # ---------------------- #
 
