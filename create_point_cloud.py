@@ -58,8 +58,8 @@ stereoMapR_y = cv_file.getNode('stereoMapR_y').mat()
 Q = cv_file.getNode('q').mat()
 print(Q)
 
-imgL = cv2.imread('Data/Output/Color_image/Color_image25.jpg', cv2.IMREAD_GRAYSCALE)
-imgR = cv2.imread('Data/Output/RGB_CAM/RGB_image25.jpg', cv2.IMREAD_GRAYSCALE)
+imgL = cv2.imread('Data/Output/Color_image/Color_image20.jpg', cv2.IMREAD_GRAYSCALE)
+imgR = cv2.imread('Data/Output/RGB_CAM/RGB_image20.jpg', cv2.IMREAD_GRAYSCALE)
 
 # Show the frames
 cv2.imshow("frame right", imgR)
@@ -147,5 +147,6 @@ create_output(output_points, output_colors, output_file)
 
 pcd = o3d.io.read_point_cloud("Data/Output/PointClouds/Stereo/point_cloud_stereo.ply", remove_nan_points=True,
                               remove_infinite_points=True)
+print(pcd)
 o3d.visualization.draw_geometries([pcd])
 cloudPoints = np.asarray(pcd.points)

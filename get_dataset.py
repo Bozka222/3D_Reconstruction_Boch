@@ -111,7 +111,7 @@ while True:
     cv2.imshow('RGB_CAM', rotated_RGB_image)
     key = cv2.waitKey(1)
 
-    cv2.imwrite(f"Data/Output/Color_image/Colo_image{i}.jpg", rotated_color_image)
+    cv2.imwrite(f"Data/Output/Color_image/Color_image{i}.jpg", rotated_color_image)
     cv2.imwrite(f"Data/Output/Depth_image/Depth_image{i}.jpg", rotated_depth_image)
     cv2.imwrite(f"Data/Output/RGB_CAM/RGB_image{i}.jpg", rotated_RGB_image)
     i += 1
