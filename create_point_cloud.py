@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import open3d as o3d
 from matplotlib import pyplot as plt
 
 
@@ -57,8 +58,8 @@ stereoMapR_y = cv_file.getNode('stereoMapR_y').mat()
 Q = cv_file.getNode('q').mat()
 print(Q)
 
-imgL = cv2.imread('Data/Input/Camera_Calibration_Images/testing_chessboard/stereoLeft/Im_L_1.png', cv2.IMREAD_GRAYSCALE)
-imgR = cv2.imread('Data/Input/Camera_Calibration_Images/testing_chessboard/stereoRight/Im_R_1.png', cv2.IMREAD_GRAYSCALE)
+imgL = cv2.imread('Data/Output/Color_image/Color_image25.jpg', cv2.IMREAD_GRAYSCALE)
+imgR = cv2.imread('Data/Output/RGB_CAM/RGB_image25.jpg', cv2.IMREAD_GRAYSCALE)
 
 # Show the frames
 cv2.imshow("frame right", imgR)
@@ -73,6 +74,8 @@ imgL = cv2.remap(imgL, stereoMapL_x, stereoMapL_y, cv2.INTER_LANCZOS4, cv2.BORDE
 # Show the frames
 cv2.imshow("frame right", imgR)
 cv2.imshow("frame left", imgL)
+
+cv2.waitKey(0)
 
 # Down_sample each image 3 times (because they're too big)
 imgL = down_sample_image(imgL, 2)
@@ -103,10 +106,11 @@ stereo = cv2.StereoSGBM.create(minDisparity=min_disp,
 
 # Compute disparity map
 print("\nComputing the disparity  map...")
-disparity_map = stereo.compute(imgL, imgR)
+disparity_map = stereo.compute(imgL, imgR).astype(np.float32) / 16.0
 
 # Show disparity map before generating 3D cloud to verify that point cloud will be usable.
 plt.imshow(disparity_map, 'gray')
+# cv2.imshow('Disparity Map', (disparity_map - min_disp) / num_disp)
 plt.show()
 
 # Generate  point cloud.
@@ -114,6 +118,13 @@ print("\nGenerating the 3D map...")
 
 # Get new down_sampled width and height
 h, w = imgR.shape[:2]
+# focal_length = 0.8*w
+#
+# # Perspective transformation matrix
+# Q = np.float32([[1, 0, 0, -w/2.0],
+#                 [0, -1, 0,  h/2.0],
+#                 [0, 0, 0, -focal_length],
+#                 [0, 0, 1, 0]])
 
 # Reproject points into 3D
 points_3D = cv2.reprojectImageTo3D(disparity_map, Q)
@@ -128,8 +139,13 @@ output_points = points_3D[mask_map]
 output_colors = colors[mask_map]
 
 # Define name for output file
-output_file = 'Data/Output/PointClouds/Stereo/3D.ply'
+output_file = 'Data/Output/PointClouds/Stereo/point_cloud_stereo.ply'
 
 # Generate point cloud
 print("\n Creating the output file... \n")
 create_output(output_points, output_colors, output_file)
+
+pcd = o3d.io.read_point_cloud("Data/Output/PointClouds/Stereo/point_cloud_stereo.ply", remove_nan_points=True,
+                              remove_infinite_points=True)
+o3d.visualization.draw_geometries([pcd])
+cloudPoints = np.asarray(pcd.points)

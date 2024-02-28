@@ -100,22 +100,22 @@ while True:
     depth_image = np.asanyarray(depth_frame.get_data())
     color_image = np.asanyarray(color_frame.get_data())
     depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.027), cv2.COLORMAP_JET)
+    cropped_img = frame[0:720, 0:1280]
 
     rotated_depth_image = cv2.rotate(depth_colormap, cv2.ROTATE_90_CLOCKWISE)
     rotated_color_image = cv2.rotate(color_image, cv2.ROTATE_90_CLOCKWISE)
-    rotated_RGB_image = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+    rotated_RGB_image = cv2.rotate(cropped_img, cv2.ROTATE_90_CLOCKWISE)
 
     cv2.imshow("RGB_Stream", rotated_color_image)
     cv2.imshow("Depth_Stream", rotated_depth_image)
     cv2.imshow('RGB_CAM', rotated_RGB_image)
     key = cv2.waitKey(1)
 
-    cv2.imwrite(f"Data/Output/Color_image/Color_image{i}.jpg", rotated_color_image)
+    cv2.imwrite(f"Data/Output/Color_image/Colo_image{i}.jpg", rotated_color_image)
     cv2.imwrite(f"Data/Output/Depth_image/Depth_image{i}.jpg", rotated_depth_image)
     cv2.imwrite(f"Data/Output/RGB_CAM/RGB_image{i}.jpg", rotated_RGB_image)
     i += 1
     if key == ord("\x1b"):  # End stream when pressing ESC
-        cv2.destroyAllWindows()
         break
 
 # End stream

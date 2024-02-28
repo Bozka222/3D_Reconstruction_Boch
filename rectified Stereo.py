@@ -31,16 +31,20 @@ while cap.isOpened():
     frame_left = np.asanyarray(color_frame.get_data())
     success, frame_right = cap.read()
 
-    # Undistorted and rectify images
-    frame_right = cv2.remap(frame_right, stereoMapR_x, stereoMapR_y, cv2.INTER_LANCZOS4, cv2.BORDER_CONSTANT, 0)
-    frame_left = cv2.remap(frame_left, stereoMapL_x, stereoMapL_y, cv2.INTER_LANCZOS4, cv2.BORDER_CONSTANT, 0)
+    cropped_img = frame_right[0:720, 0:1280]
+    rotated_image_R = cv2.rotate(cropped_img, cv2.ROTATE_90_CLOCKWISE)
+    rotated_image_L = cv2.rotate(frame_left, cv2.ROTATE_90_CLOCKWISE)
+
+    # # Undistorted and rectify images
+    frame_right = cv2.remap(rotated_image_R, stereoMapR_x, stereoMapR_y, cv2.INTER_LANCZOS4, cv2.BORDER_CONSTANT, 0)
+    frame_left = cv2.remap(rotated_image_L, stereoMapL_x, stereoMapL_y, cv2.INTER_LANCZOS4, cv2.BORDER_CONSTANT, 0)
 
     # Show the frames
     cv2.imshow("frame right", frame_right)
     cv2.imshow("frame left", frame_left)
 
-    # Hit "q" to close the window
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    key = cv2.waitKey(1)
+    if key == ord("\x1b"):  # End stream when pressing ESC
         break
 
 # Release and destroy all windows before termination
