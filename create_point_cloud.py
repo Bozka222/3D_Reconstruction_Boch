@@ -62,72 +62,61 @@ imgL = cv2.imread('Data/Output/Color_image/Color_image20.jpg', cv2.IMREAD_GRAYSC
 imgR = cv2.imread('Data/Output/RGB_CAM/RGB_image20.jpg', cv2.IMREAD_GRAYSCALE)
 
 # Show the frames
-cv2.imshow("frame right", imgR)
-cv2.imshow("frame left", imgL)
-
-cv2.waitKey(0)
+# cv2.imshow("frame right", imgR)
+# cv2.imshow("frame left", imgL)
+#
+# cv2.waitKey(0)
 
 # Undistort and rectify images
 imgR = cv2.remap(imgR, stereoMapR_x, stereoMapR_y, cv2.INTER_LANCZOS4, cv2.BORDER_CONSTANT, 0)
 imgL = cv2.remap(imgL, stereoMapL_x, stereoMapL_y, cv2.INTER_LANCZOS4, cv2.BORDER_CONSTANT, 0)
 
 # Show the frames
-cv2.imshow("frame right", imgR)
-cv2.imshow("frame left", imgL)
-
-cv2.waitKey(0)
+# cv2.imshow("frame right", imgR)
+# cv2.imshow("frame left", imgL)
+#
+# cv2.waitKey(0)
 
 # Down_sample each image 3 times (because they're too big)
-imgL = down_sample_image(imgL, 2)
-imgR = down_sample_image(imgR, 2)
+# imgL = down_sample_image(imgL, 2)
+# imgR = down_sample_image(imgR, 2)
 
-# stereo = cv2.StereoBM_create(numDisparities=32, blockSize=9)
-# For each pixel algorithm will find the best disparity from 0
-# Larger block size implies smoother, though less accurate disparity map
-# disparity = stereo.compute(imgL, imgR)
-
-# Set disparity parameters
-# Note: disparity range is tuned according to specific parameters obtained through trial and error.
-win_size = 5
-min_disp = -1
-max_disp = 31  # min_disp * 9
-num_disp = max_disp - min_disp  # Needs to be divisible by 16
+# cv2.imshow("frame right", imgR)
+# cv2.imshow("frame left", imgL)
+#
+# cv2.waitKey(0)
 
 # Create Block matching object.
-stereo = cv2.StereoSGBM.create(minDisparity=min_disp,
-                               numDisparities=num_disp,
-                               blockSize=5,
-                               uniquenessRatio=5,
-                               speckleWindowSize=5,
-                               speckleRange=5,
-                               disp12MaxDiff=2,
-                               P1=8 * 3 * win_size ** 2,  # 8*3*win_size**2,
-                               P2=32 * 3 * win_size ** 2)  # 32*3*win_size**2)
+block_size = 5
+stereo = cv2.StereoSGBM.create(minDisparity=0,
+                               numDisparities=48,
+                               blockSize=block_size,
+                               uniquenessRatio=1,
+                               speckleWindowSize=1,
+                               speckleRange=1,
+                               disp12MaxDiff=70,
+                               preFilterCap=63,
+                               P1=8 * 3 * block_size ** 2,  # 8*3*win_size**2,
+                               P2=32 * 3 * block_size ** 2)  # 32*3*win_size**2)
 
 # Compute disparity map
 print("\nComputing the disparity  map...")
 disparity_map = stereo.compute(imgL, imgR).astype(np.float32) / 16.0
+cv2.imwrite("Data/Output/Disparity_Map/dsp01.png", disparity_map)
 
 # Show disparity map before generating 3D cloud to verify that point cloud will be usable.
-plt.imshow(disparity_map, 'gray')
-# cv2.imshow('Disparity Map', (disparity_map - min_disp) / num_disp)
-plt.show()
+# plt.imshow(disparity_map, 'gray')
+# plt.show()
 
 # Generate  point cloud.
 print("\nGenerating the 3D map...")
 
 # Get new down_sampled width and height
 h, w = imgR.shape[:2]
-# focal_length = 0.8*w
-#
-# # Perspective transformation matrix
-# Q = np.float32([[1, 0, 0, -w/2.0],
-#                 [0, -1, 0,  h/2.0],
-#                 [0, 0, 0, -focal_length],
-#                 [0, 0, 1, 0]])
 
 # Reproject points into 3D
-points_3D = cv2.reprojectImageTo3D(disparity_map, Q)
+points_3D = cv2.reprojectImageTo3D(disparity_map, Q, handleMissingValues=True)
+
 # Get color points
 colors = cv2.cvtColor(imgL, cv2.COLOR_BGR2RGB)
 
@@ -145,8 +134,11 @@ output_file = 'Data/Output/PointClouds/Stereo/point_cloud_stereo.ply'
 print("\n Creating the output file... \n")
 create_output(output_points, output_colors, output_file)
 
-pcd = o3d.io.read_point_cloud("Data/Output/PointClouds/Stereo/point_cloud_stereo.ply", remove_nan_points=True,
-                              remove_infinite_points=True)
-print(pcd)
-o3d.visualization.draw_geometries([pcd])
-cloudPoints = np.asarray(pcd.points)
+# try:
+#     pcd = o3d.io.read_point_cloud("Data/Output/PointClouds/Stereo/point_cloud_stereo.ply", remove_nan_points=True,
+#                               remove_infinite_points=True)
+# except IOError as e:
+#     print("Could not read the point cloud")
+# else:
+#     print(pcd)
+#     o3d.visualization.draw_geometries([pcd])
