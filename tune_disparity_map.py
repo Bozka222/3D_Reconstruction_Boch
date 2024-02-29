@@ -45,8 +45,8 @@ cv2.createTrackbar('preFilterCap', 'disp', 63, 63, nothing)
 cv2.createTrackbar('uniquenessRatio', 'disp', 1, 100, nothing)
 cv2.createTrackbar('speckleWindowSize', 'disp', 1, 200, nothing)
 cv2.createTrackbar('speckleRange', 'disp', 1, 100, nothing)
-cv2.createTrackbar('P1', 'disp', 8, 25, nothing)
-cv2.createTrackbar('P2', 'disp', 32, 50, nothing)
+cv2.createTrackbar('P1', 'disp', 8, 100, nothing)
+cv2.createTrackbar('P2', 'disp', 32, 100, nothing)
 
 # Creating an object of StereoBM algorithm
 stereo = cv2.StereoSGBM.create()
@@ -88,8 +88,15 @@ while True:
     # Scaling down the disparity values and normalizing them
     disparity = (disparity / 16.0 - minDisparity) / numDisparities
 
+    # Normalize the disparity map to 0-255 range for better visualization
+    disparity_map_normalized = cv2.normalize(disparity, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX,
+                                             dtype=cv2.CV_8U)
+
+    # Convert the disparity map to a false color representation
+    disparity_map_color = cv2.applyColorMap(disparity_map_normalized, cv2.COLORMAP_JET)
+
     # Displaying the disparity map
-    cv2.imshow("disp", disparity)
+    cv2.imshow("disp", disparity_map_color)
     cv2.imwrite("Data/Output/Disparity_Map/disp_01.png", disparity)
 
     # Close window using esc key

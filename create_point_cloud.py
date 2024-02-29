@@ -87,9 +87,9 @@ imgL = cv2.remap(imgL, stereoMapL_x, stereoMapL_y, cv2.INTER_LANCZOS4, cv2.BORDE
 # cv2.waitKey(0)
 
 # Create Block matching object.
-block_size = 5
+block_size = 7
 stereo = cv2.StereoSGBM.create(minDisparity=0,
-                               numDisparities=48,
+                               numDisparities=16,
                                blockSize=block_size,
                                uniquenessRatio=1,
                                speckleWindowSize=1,
@@ -97,17 +97,42 @@ stereo = cv2.StereoSGBM.create(minDisparity=0,
                                disp12MaxDiff=70,
                                preFilterCap=63,
                                P1=8 * 3 * block_size ** 2,  # 8*3*win_size**2,
-                               P2=32 * 3 * block_size ** 2)  # 32*3*win_size**2)
+                               P2=50 * 3 * block_size ** 2)  # 32*3*win_size**2)
 
 # Compute disparity map
 print("\nComputing the disparity  map...")
 disparity_map = stereo.compute(imgL, imgR).astype(np.float32) / 16.0
-cv2.imshow("Disparity map", disparity_map)
-cv2.imwrite("Data/Output/Disparity_Map/dsp01.png", disparity_map)
+right_matcher = cv2.ximgproc.createRightMatcher(stereo)
+disparity_left = np.float32(stereo.compute(imgL, imgR))
+disparity_right = np.float32(right_matcher.compute(imgR, imgL))
+
+# Disparity WLS Filter
+wls_filter = cv2.ximgproc.createDisparityWLSFilter(stereo)
+wls_filter.setLambda(8000.0)  # Adjust these parameters based on your specific application
+wls_filter.setSigmaColor(1.5)
+
+filtered_disparity = wls_filter.filter(disparity_left, imgL, disparity_map_right=disparity_right)
+
+# Post-processing
+# filtered_disparity = cv2.normalize(src=filtered_disparity, dst=filtered_disparity, beta=0, alpha=255,
+#                                    norm_type=cv2.NORM_MINMAX)
+
+cv2.imshow("Disparity map", filtered_disparity)
+cv2.imwrite("Data/Output/Disparity_Map/dsp01.png", filtered_disparity)
 
 # Show disparity map before generating 3D cloud to verify that point cloud will be usable.
-plt.imshow(disparity_map)
+plt.imshow(filtered_disparity)
+plt.colorbar()
 plt.show()
+
+# Verify the data type and content of filtered_disparity
+print("Filtered Disparity Map Shape:", filtered_disparity.shape)
+print("Filtered Disparity Map Data Type:", filtered_disparity.dtype)
+print("Min and Max Disparity Values:", filtered_disparity.min(), filtered_disparity.max())
+
+# Verify if there are any NaN or Inf values in the filtered disparity map
+print("NaN Values in Filtered Disparity Map:", np.isnan(filtered_disparity).any())
+print("Inf Values in Filtered Disparity Map:", np.isinf(filtered_disparity).any())
 
 # Generate  point cloud.
 print("\nGenerating the 3D map...")
@@ -116,14 +141,14 @@ print("\nGenerating the 3D map...")
 h, w = imgR.shape[:2]
 
 # Reproject points into 3D
-points_3D = cv2.reprojectImageTo3D(disparity_map, Q)
+points_3D = cv2.reprojectImageTo3D(filtered_disparity, Q)
 
 # Get rid of points with value 0 (i.e. no depth)
-output_points = points_3D[disparity_map > disparity_map.min()]
+output_points = points_3D[filtered_disparity > filtered_disparity.min()]
 
 # Get color points
 colors = cv2.cvtColor(imgL, cv2.COLOR_BGR2RGB)
-output_colors = colors[disparity_map > disparity_map.min()]
+output_colors = colors[filtered_disparity > filtered_disparity.min()]
 
 pcd = o3d.geometry.PointCloud()
 pcd.points = o3d.utility.Vector3dVector(output_points)
