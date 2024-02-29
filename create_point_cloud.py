@@ -102,11 +102,12 @@ stereo = cv2.StereoSGBM.create(minDisparity=0,
 # Compute disparity map
 print("\nComputing the disparity  map...")
 disparity_map = stereo.compute(imgL, imgR).astype(np.float32) / 16.0
+cv2.imshow("Disparity map", disparity_map)
 cv2.imwrite("Data/Output/Disparity_Map/dsp01.png", disparity_map)
 
 # Show disparity map before generating 3D cloud to verify that point cloud will be usable.
-# plt.imshow(disparity_map, 'gray')
-# plt.show()
+plt.imshow(disparity_map)
+plt.show()
 
 # Generate  point cloud.
 print("\nGenerating the 3D map...")
@@ -115,30 +116,30 @@ print("\nGenerating the 3D map...")
 h, w = imgR.shape[:2]
 
 # Reproject points into 3D
-points_3D = cv2.reprojectImageTo3D(disparity_map, Q, handleMissingValues=True)
+points_3D = cv2.reprojectImageTo3D(disparity_map, Q)
+
+# Get rid of points with value 0 (i.e. no depth)
+output_points = points_3D[disparity_map > disparity_map.min()]
 
 # Get color points
 colors = cv2.cvtColor(imgL, cv2.COLOR_BGR2RGB)
+output_colors = colors[disparity_map > disparity_map.min()]
 
-# Get rid of points with value 0 (i.e. no depth)
-mask_map = disparity_map > disparity_map.min()
+pcd = o3d.geometry.PointCloud()
+pcd.points = o3d.utility.Vector3dVector(output_points)
+pcd.colors = o3d.utility.Vector3dVector(output_colors / 255.0)
 
-# Mask colors and points.
-output_points = points_3D[mask_map]
-output_colors = colors[mask_map]
+# Visualize the point cloud
+pcd.transform([[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]])
+o3d.visualization.draw_geometries([pcd], window_name="Stereo point cloud", width=1280, height=720)
 
-# Define name for output file
-output_file = 'Data/Output/PointClouds/Stereo/point_cloud_stereo.ply'
+o3d.io.write_point_cloud("Data/Output/PointClouds/Stereo/Stereo_PointCloud.ply", pcd)
 
-# Generate point cloud
-print("\n Creating the output file... \n")
-create_output(output_points, output_colors, output_file)
+# # Define name for output file
+# output_file = 'Data/Output/PointClouds/Stereo/point_cloud_stereo.ply'
+#
+# # Generate point cloud
+# print("\n Creating the output file... \n")
+# create_output(output_points, output_colors, output_file)
 
-# try:
-#     pcd = o3d.io.read_point_cloud("Data/Output/PointClouds/Stereo/point_cloud_stereo.ply", remove_nan_points=True,
-#                               remove_infinite_points=True)
-# except IOError as e:
-#     print("Could not read the point cloud")
-# else:
-#     print(pcd)
-#     o3d.visualization.draw_geometries([pcd])
+
