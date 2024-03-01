@@ -44,10 +44,14 @@ vid.set(cv2.CAP_PROP_FPS, 15)
 # align_to = rs.stream.color
 # align = rs.align(align_to)
 
-i = -1
+i = 0
 j = 0
 metadata_3D = {}
 metadata_RGB = {}
+
+spat_filter = rs.spatial_filter(0.30, 20.0, 4.0, 0.0)  # Spatial - edge-preserving spatial smoothing
+temp_filter = rs.temporal_filter(0.25, 20.0, 6)  # Temporal - reduces temporal noise
+hole_filter = rs.hole_filling_filter(2)
 
 # Stream continues
 while True:
@@ -96,10 +100,14 @@ while True:
 
     j += 1
 
+    filtered = spat_filter.process(depth_frame)
+    filtered1 = temp_filter.process(filtered)
+    filtered2 = hole_filter.process(filtered1)
+
     # Convert image frame to numpy array
-    depth_image = np.asanyarray(depth_frame.get_data())
+    depth_image = np.asanyarray(filtered2.get_data())
     color_image = np.asanyarray(color_frame.get_data())
-    depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.027), cv2.COLORMAP_JET)
+    depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.025), cv2.COLORMAP_JET)
     cropped_img = frame[0:720, 0:1280]
 
     rotated_depth_image = cv2.rotate(depth_colormap, cv2.ROTATE_90_CLOCKWISE)
@@ -111,9 +119,9 @@ while True:
     cv2.imshow('RGB_CAM', rotated_RGB_image)
     key = cv2.waitKey(1)
 
-    cv2.imwrite(f"Data/Output/Color_image/Color_image{i}.jpg", rotated_color_image)
-    cv2.imwrite(f"Data/Output/Depth_image/Depth_image{i}.jpg", rotated_depth_image)
-    cv2.imwrite(f"Data/Output/RGB_CAM/RGB_image{i}.jpg", rotated_RGB_image)
+    cv2.imwrite(f"../dataset/vozidlo1/Color_image{i}.jpg", rotated_color_image)
+    cv2.imwrite(f"../dataset/vozidlo1/Depth_image{i}.jpg", rotated_depth_image)
+    cv2.imwrite(f"../dataset/vozidlo1/RGB_image{i}.jpg", rotated_RGB_image)
     i += 1
     if key == ord("\x1b"):  # End stream when pressing ESC
         break

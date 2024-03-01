@@ -4,8 +4,8 @@ import cv2
 import numpy as np
 
 # Load in color and depth image to create the point cloud
-color_raw = o3d.io.read_image("Data/Output/Color_image/Color_image0.jpg")
-depth_raw = o3d.io.read_image("Data/Output/Depth_image/Depth_image0.jpg")
+color_raw = o3d.io.read_image("Data/Output/Color_image/Color_image10.jpg")
+depth_raw = o3d.io.read_image("Data/Output/Depth_image/Depth_image10.jpg")
 color = o3d.geometry.Image(np.array(np.asarray(color_raw)[:, :, :3]).astype('uint8'))
 rgbd_image = o3d.geometry.RGBDImage.create_from_color_and_depth(color=color, depth=depth_raw,
                                                                 convert_rgb_to_intensity=False, depth_scale=1000)
