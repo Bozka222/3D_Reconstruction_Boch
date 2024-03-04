@@ -10,8 +10,8 @@ stereoMapR_x = cv_file.getNode('stereoMapR_x').mat()
 stereoMapR_y = cv_file.getNode('stereoMapR_y').mat()
 Q = cv_file.getNode('q').mat()
 
-imgL = cv2.imread('Data/Output/Color_image/Color_image30.jpg', cv2.IMREAD_GRAYSCALE)
-imgR = cv2.imread('Data/Output/RGB_CAM/RGB_image30.jpg', cv2.IMREAD_GRAYSCALE)
+imgL = cv2.imread('Data/Output/Color_image/Color_image10.jpg', cv2.IMREAD_GRAYSCALE)
+imgR = cv2.imread('Data/Output/RGB_CAM/RGB_image10.jpg', cv2.IMREAD_GRAYSCALE)
 
 # Show the frames
 # cv2.imshow("frame right", imgR)

@@ -26,10 +26,10 @@ start = time.time()
 # Turn-on global time, turn-off auto-exposure
 depth_sensor = profile.get_device().query_sensors()[0]
 depth_sensor.set_option(rs.option.global_time_enabled, 1)
-depth_sensor.set_option(rs.option.enable_auto_exposure, 0)
+depth_sensor.set_option(rs.option.enable_auto_exposure, 1)
 color_sensor = profile.get_device().query_sensors()[1]
 color_sensor.set_option(rs.option.global_time_enabled, 1)
-color_sensor.set_option(rs.option.enable_auto_exposure, 0)
+color_sensor.set_option(rs.option.enable_auto_exposure, 1)
 
 vid = cv2.VideoCapture(3, cv2.CAP_DSHOW)
 vid.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
@@ -49,8 +49,8 @@ j = 0
 metadata_3D = {}
 metadata_RGB = {}
 
-spat_filter = rs.spatial_filter(0.30, 20.0, 4.0, 0.0)  # Spatial - edge-preserving spatial smoothing
-temp_filter = rs.temporal_filter(0.25, 20.0, 6)  # Temporal - reduces temporal noise
+spat_filter = rs.spatial_filter(0.40, 20.0, 5.0, 0.0)  # Spatial - edge-preserving spatial smoothing
+temp_filter = rs.temporal_filter(0.8, 30.0, 8)  # Temporal - reduces temporal noise
 hole_filter = rs.hole_filling_filter(2)
 
 # Stream continues
@@ -119,9 +119,14 @@ while True:
     cv2.imshow('RGB_CAM', rotated_RGB_image)
     key = cv2.waitKey(1)
 
-    cv2.imwrite(f"../dataset/vozidlo1/Color_image{i}.jpg", rotated_color_image)
-    cv2.imwrite(f"../dataset/vozidlo1/Depth_image{i}.jpg", rotated_depth_image)
-    cv2.imwrite(f"../dataset/vozidlo1/RGB_image{i}.jpg", rotated_RGB_image)
+    # cv2.imwrite(f"../dataset/vozidlo1/Color_image{i}.jpg", rotated_color_image)
+    # cv2.imwrite(f"../dataset/vozidlo1/Depth_image{i}.jpg", rotated_depth_image)
+    # cv2.imwrite(f"../dataset/vozidlo1/RGB_image{i}.jpg", rotated_RGB_image)
+
+    cv2.imwrite(f"Data/Output/Color_image/Color_image{i}.jpg", rotated_color_image)
+    cv2.imwrite(f"Data/Output/Depth_image/Depth_image{i}.jpg", rotated_depth_image)
+    cv2.imwrite(f"Data/Output/RGB_CAM/RGB_image{i}.jpg", rotated_RGB_image)
+
     i += 1
     if key == ord("\x1b"):  # End stream when pressing ESC
         break

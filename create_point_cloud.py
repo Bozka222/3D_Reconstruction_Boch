@@ -58,24 +58,24 @@ stereoMapR_y = cv_file.getNode('stereoMapR_y').mat()
 Q = cv_file.getNode('q').mat()
 print(Q)
 
-imgL = cv2.imread('Data/Output/Color_image/Color_image20.jpg', cv2.IMREAD_GRAYSCALE)
-imgR = cv2.imread('Data/Output/RGB_CAM/RGB_image20.jpg', cv2.IMREAD_GRAYSCALE)
+imgL = cv2.imread('Data/Output/Color_image/Color_image10.jpg', cv2.IMREAD_GRAYSCALE)
+imgR = cv2.imread('Data/Output/RGB_CAM/RGB_image10.jpg', cv2.IMREAD_GRAYSCALE)
 
 # Show the frames
-# cv2.imshow("frame right", imgR)
-# cv2.imshow("frame left", imgL)
-#
-# cv2.waitKey(0)
+cv2.imshow("frame right", imgR)
+cv2.imshow("frame left", imgL)
+
+cv2.waitKey(0)
 
 # Undistort and rectify images
 imgR = cv2.remap(imgR, stereoMapR_x, stereoMapR_y, cv2.INTER_LANCZOS4, cv2.BORDER_CONSTANT, 0)
 imgL = cv2.remap(imgL, stereoMapL_x, stereoMapL_y, cv2.INTER_LANCZOS4, cv2.BORDER_CONSTANT, 0)
 
 # Show the frames
-# cv2.imshow("frame right", imgR)
-# cv2.imshow("frame left", imgL)
-#
-# cv2.waitKey(0)
+cv2.imshow("frame right", imgR)
+cv2.imshow("frame left", imgL)
+
+cv2.waitKey(0)
 
 # Down_sample each image 3 times (because they're too big)
 # imgL = down_sample_image(imgL, 2)
