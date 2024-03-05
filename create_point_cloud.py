@@ -58,8 +58,8 @@ stereoMapR_y = cv_file.getNode('stereoMapR_y').mat()
 Q = cv_file.getNode('q').mat()
 print(Q)
 
-imgL = cv2.imread('Data/Output/Color_image/Color_image10.jpg', cv2.IMREAD_GRAYSCALE)
-imgR = cv2.imread('Data/Output/RGB_CAM/RGB_image10.jpg', cv2.IMREAD_GRAYSCALE)
+imgL = cv2.imread('Data/Input/Img_without_BG/Color_image0.png', cv2.IMREAD_GRAYSCALE)
+imgR = cv2.imread('Data/Input/Img_without_BG/RGB_image0.png', cv2.IMREAD_GRAYSCALE)
 
 # Show the frames
 cv2.imshow("frame right", imgR)
@@ -80,7 +80,7 @@ cv2.waitKey(0)
 # Down_sample each image 3 times (because they're too big)
 # imgL = down_sample_image(imgL, 2)
 # imgR = down_sample_image(imgR, 2)
-
+#
 # cv2.imshow("frame right", imgR)
 # cv2.imshow("frame left", imgL)
 #
@@ -103,19 +103,19 @@ stereo = cv2.StereoSGBM.create(minDisparity=0,
 print("\nComputing the disparity  map...")
 disparity_map = stereo.compute(imgL, imgR).astype(np.float32) / 16.0
 
-# WLS Filtering for smoother disparity maps
+# # WLS Filtering for smoother disparity maps
 # right_matcher = cv2.ximgproc.createRightMatcher(stereo)
 # disparity_left = np.float32(stereo.compute(imgL, imgR))
 # disparity_right = np.float32(right_matcher.compute(imgR, imgL))
-
+#
 # # Disparity WLS Filter
 # wls_filter = cv2.ximgproc.createDisparityWLSFilter(stereo)
-# wls_filter.setLambda(8000.0)  # Adjust these parameters based on your specific application
+# wls_filter.setLambda(1000.0)  # Adjust these parameters based on your specific application
 # wls_filter.setSigmaColor(1.5)
 #
 # filtered_disparity = wls_filter.filter(disparity_left, imgL, disparity_map_right=disparity_right)
-
-# Post-processing
+#
+# # Post-processing
 # filtered_disparity = cv2.normalize(src=filtered_disparity, dst=filtered_disparity, beta=0, alpha=255,
 #                                    norm_type=cv2.NORM_MINMAX)
 

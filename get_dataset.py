@@ -123,9 +123,9 @@ while True:
     # cv2.imwrite(f"../dataset/vozidlo1/Depth_image{i}.jpg", rotated_depth_image)
     # cv2.imwrite(f"../dataset/vozidlo1/RGB_image{i}.jpg", rotated_RGB_image)
 
-    cv2.imwrite(f"Data/Output/Color_image/Color_image{i}.jpg", rotated_color_image)
-    cv2.imwrite(f"Data/Output/Depth_image/Depth_image{i}.jpg", rotated_depth_image)
-    cv2.imwrite(f"Data/Output/RGB_CAM/RGB_image{i}.jpg", rotated_RGB_image)
+    # cv2.imwrite(f"Data/Output/Color_image/Color_image{i}.jpg", rotated_color_image)
+    # cv2.imwrite(f"Data/Output/Depth_image/Depth_image{i}.jpg", rotated_depth_image)
+    # cv2.imwrite(f"Data/Output/RGB_CAM/RGB_image{i}.jpg", rotated_RGB_image)
 
     i += 1
     if key == ord("\x1b"):  # End stream when pressing ESC

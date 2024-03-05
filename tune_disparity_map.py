@@ -10,8 +10,8 @@ stereoMapR_x = cv_file.getNode('stereoMapR_x').mat()
 stereoMapR_y = cv_file.getNode('stereoMapR_y').mat()
 Q = cv_file.getNode('q').mat()
 
-imgL = cv2.imread('Data/Output/Color_image/Color_image10.jpg', cv2.IMREAD_GRAYSCALE)
-imgR = cv2.imread('Data/Output/RGB_CAM/RGB_image10.jpg', cv2.IMREAD_GRAYSCALE)
+imgL = cv2.imread('Data/Input/Img_without_BG/Color_image0.png', cv2.IMREAD_GRAYSCALE)
+imgR = cv2.imread('Data/Input/Img_without_BG/RGB_image0.png', cv2.IMREAD_GRAYSCALE)
 
 # Show the frames
 # cv2.imshow("frame right", imgR)
@@ -24,10 +24,10 @@ imgR = cv2.remap(imgR, stereoMapR_x, stereoMapR_y, cv2.INTER_LANCZOS4, cv2.BORDE
 imgL = cv2.remap(imgL, stereoMapL_x, stereoMapL_y, cv2.INTER_LANCZOS4, cv2.BORDER_CONSTANT, 0)
 
 # # Show the frames
-# cv2.imshow("frame right", imgR)
-# cv2.imshow("frame left", imgL)
-#
-# cv2.waitKey(0)
+cv2.imshow("frame right", imgR)
+cv2.imshow("frame left", imgL)
+
+cv2.waitKey(0)
 
 
 def nothing(x):
