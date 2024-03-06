@@ -10,8 +10,8 @@ stereoMapR_x = cv_file.getNode('stereoMapR_x').mat()
 stereoMapR_y = cv_file.getNode('stereoMapR_y').mat()
 Q = cv_file.getNode('q').mat()
 
-imgL = cv2.imread('Data/Input/Img_without_BG/Color_image0.png', cv2.IMREAD_GRAYSCALE)
-imgR = cv2.imread('Data/Input/Img_without_BG/RGB_image0.png', cv2.IMREAD_GRAYSCALE)
+imgL = cv2.imread('Data/Output/Color_image/Color_image0.jpg', cv2.IMREAD_GRAYSCALE)
+imgR = cv2.imread('Data/Output/RGB_CAM/RGB_image0.jpg', cv2.IMREAD_GRAYSCALE)
 
 # Show the frames
 # cv2.imshow("frame right", imgR)
@@ -88,15 +88,15 @@ while True:
     # Scaling down the disparity values and normalizing them
     disparity = (disparity / 16.0 - minDisparity) / numDisparities
 
-    # Normalize the disparity map to 0-255 range for better visualization
-    disparity_map_normalized = cv2.normalize(disparity, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX,
-                                             dtype=cv2.CV_8U)
-
-    # Convert the disparity map to a false color representation
-    disparity_map_color = cv2.applyColorMap(disparity_map_normalized, cv2.COLORMAP_JET)
+    # # Normalize the disparity map to 0-255 range for better visualization
+    # disparity_map_normalized = cv2.normalize(disparity, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX,
+    #                                          dtype=cv2.CV_8U)
+    #
+    # # Convert the disparity map to a false color representation
+    # disparity_map_color = cv2.applyColorMap(disparity_map_normalized, cv2.COLORMAP_JET)
 
     # Displaying the disparity map
-    cv2.imshow("disp", disparity_map_color)
+    cv2.imshow("disp", disparity)
     cv2.imwrite("Data/Output/Disparity_Map/disp_01.png", disparity)
 
     # Close window using esc key

@@ -107,7 +107,7 @@ rectifyScale = 1
 rectL, rectR, projMatrixL, projMatrixR, Q, roi_L, roi_R = (cv.stereoRectify(newCameraMatrixL, distL, newCameraMatrixR, distR, grayL.shape[::-1], rot, trans, rectifyScale, (0, 0)))
 
 print(f"Rectification Parameters:\n"
-      f"Rotation Matrix L: {rectL}\n"
+      f"Rotation Matrix L:\n{rectL}\n"
       f"Rotation Matrix R:\n{rectR}\n"
       f"Projection Matrix L:\n{projMatrixL}\n"
       f"Projection Matrix R:\n{projMatrixR}\n"
