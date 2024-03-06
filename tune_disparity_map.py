@@ -10,8 +10,8 @@ stereoMapR_x = cv_file.getNode('stereoMapR_x').mat()
 stereoMapR_y = cv_file.getNode('stereoMapR_y').mat()
 Q = cv_file.getNode('q').mat()
 
-imgL = cv2.imread('Data/Output/Color_image/Color_image0.jpg', cv2.IMREAD_GRAYSCALE)
-imgR = cv2.imread('Data/Output/RGB_CAM/RGB_image0.jpg', cv2.IMREAD_GRAYSCALE)
+imgL = cv2.imread('Data/Output/Color_image/Color_image64.jpg', cv2.IMREAD_GRAYSCALE)
+imgR = cv2.imread('Data/Output/RGB_CAM/RGB_image64.jpg', cv2.IMREAD_GRAYSCALE)
 
 # Show the frames
 # cv2.imshow("frame right", imgR)
@@ -38,14 +38,14 @@ cv2.namedWindow('disp', cv2.WINDOW_NORMAL)
 cv2.resizeWindow('disp', 720, 1280)
 
 cv2.createTrackbar('minDisparity', 'disp', 0, 100, nothing)
-cv2.createTrackbar('numDisparities', 'disp', 3, 17, nothing)
-cv2.createTrackbar('blockSize', 'disp', 2, 21, nothing)
-cv2.createTrackbar('disp12MaxDiff', 'disp', 70, 100, nothing)
+cv2.createTrackbar('numDisparities', 'disp', 1, 17, nothing)
+cv2.createTrackbar('blockSize', 'disp', 0, 21, nothing)
+cv2.createTrackbar('disp12MaxDiff', 'disp', 12, 100, nothing)
 cv2.createTrackbar('preFilterCap', 'disp', 63, 63, nothing)
 cv2.createTrackbar('uniquenessRatio', 'disp', 1, 100, nothing)
 cv2.createTrackbar('speckleWindowSize', 'disp', 1, 200, nothing)
-cv2.createTrackbar('speckleRange', 'disp', 1, 100, nothing)
-cv2.createTrackbar('P1', 'disp', 8, 100, nothing)
+cv2.createTrackbar('speckleRange', 'disp', 2, 100, nothing)
+cv2.createTrackbar('P1', 'disp', 5, 100, nothing)
 cv2.createTrackbar('P2', 'disp', 32, 100, nothing)
 
 # Creating an object of StereoBM algorithm

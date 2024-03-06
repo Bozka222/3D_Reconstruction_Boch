@@ -12,8 +12,10 @@ config = rs.config()
 pipeline_wrapper = rs.pipeline_wrapper(pipeline)
 pipeline_profile = config.resolve(pipeline_wrapper)
 device = pipeline_profile.get_device()
-device_product_line = str(device.get_info(rs.camera_info.firmware_version))
-print(device_product_line)
+depth_sensor = device.first_depth_sensor()
+# Get depth scale of the device
+depth_scale = depth_sensor.get_depth_scale()
+
 
 # Set configuration parameters for streams,  Open CV supports BGRA formats!!!!
 config.enable_stream(rs.stream.color, 1280, 720, format=rs.format.bgr8, framerate=30)
@@ -35,14 +37,6 @@ vid = cv2.VideoCapture(3, cv2.CAP_DSHOW)
 vid.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
 vid.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 vid.set(cv2.CAP_PROP_FPS, 15)
-# Create an align object
-# rs.align allows us to perform alignment of depth frames to others frames
-# The "align_to" is the stream type to which we plan to align depth frames.
-# Alignment means transforming depth frame to RGB frames because they come from slightly different view
-# (Not time alignment)
-
-# align_to = rs.stream.color
-# align = rs.align(align_to)
 
 i = 0
 j = 0
@@ -58,38 +52,20 @@ while True:
     # Get frameset of color and depth
     frames = pipeline.wait_for_frames()
 
-    # Align the depth frame to color frame
-    # aligned_frames = align.process(frames)
-
     # Get frames
-    depth_frame = frames.get_depth_frame()
-    color_frame = frames.get_color_frame()
+    depth_raw_frame = frames.get_depth_frame()
+    color_raw_frame = frames.get_color_frame()
     ret, frame = vid.read()
-    fps = vid.get(cv2.CAP_PROP_FPS)
-    # print('Video frame rate={0}'.format(fps))
 
     # Validate that both frames are valid
-    if not depth_frame or not color_frame:
+    if not depth_raw_frame or not color_raw_frame:
         continue
-
-    # print(
-    #     f" Frame Number {frames.frame_number}"
-    #     f" Start: {start}"
-    #     # f" Sensor: {aligned_frames.get_frame_metadata(rs.frame_metadata_value.sensor_timestamp) / 1000. / 1000.}"
-    #     # f" Frame: {aligned_frames.get_frame_metadata(rs.frame_metadata_value.frame_timestamp) / 1000. / 1000.}"
-    #     # f" Backend: {aligned_frames.get_frame_metadata(rs.frame_metadata_value.backend_timestamp)}"
-    #     # f" Arrival: {aligned_frames.get_frame_metadata(rs.frame_metadata_value.time_of_arrival) / 1000}"
-    #     f" Global (depth): {depth_frame.get_timestamp() / 1000}"
-    #     f" Global (color): {color_frame.get_timestamp() / 1000}"
-    #     f" Diff (depth): {(depth_frame.get_timestamp() / 1000) - start}"
-    #     f" Diff (color): {(color_frame.get_timestamp() / 1000) - start}"
-    # )
 
     metadata_3D[j] = {
         "frame_number": frames.frame_number,
         "capture_start_time_stamp": start,
-        "global_depth_time_stamp": depth_frame.get_timestamp()/1000,
-        "global_color_time_stamp": color_frame.get_timestamp()/1000,
+        "global_depth_time_stamp": depth_raw_frame.get_timestamp()/1000,
+        "global_color_time_stamp": color_raw_frame.get_timestamp()/1000,
     }
 
     metadata_RGB[j] = {
@@ -100,13 +76,13 @@ while True:
 
     j += 1
 
-    filtered = spat_filter.process(depth_frame)
+    filtered = spat_filter.process(depth_raw_frame)
     filtered1 = temp_filter.process(filtered)
-    filtered2 = hole_filter.process(filtered1)
+    depth_filtered_frame = hole_filter.process(filtered1)
 
     # Convert image frame to numpy array
-    depth_image = np.asanyarray(filtered2.get_data())
-    color_image = np.asanyarray(color_frame.get_data())
+    depth_image = np.asanyarray(depth_filtered_frame.get_data())
+    color_image = np.asanyarray(color_raw_frame.get_data())
     depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.025), cv2.COLORMAP_JET)
     cropped_img = frame[0:720, 0:1280]
 
@@ -119,9 +95,9 @@ while True:
     cv2.imshow('RGB_CAM', rotated_RGB_image)
     key = cv2.waitKey(1)
 
-    # cv2.imwrite(f"../dataset/vozidlo1/Color_image{i}.jpg", rotated_color_image)
-    # cv2.imwrite(f"../dataset/vozidlo1/Depth_image{i}.jpg", rotated_depth_image)
-    # cv2.imwrite(f"../dataset/vozidlo1/RGB_image{i}.jpg", rotated_RGB_image)
+    # cv2.imwrite(f"../dataset/vozidlo5/Color_image{i}.jpg", rotated_color_image)
+    # cv2.imwrite(f"../dataset/vozidlo5/Depth_image{i}.jpg", rotated_depth_image)
+    # cv2.imwrite(f"../dataset/vozidlo5/RGB_image{i}.jpg", rotated_RGB_image)
 
     # cv2.imwrite(f"Data/Output/Color_image/Color_image{i}.jpg", rotated_color_image)
     # cv2.imwrite(f"Data/Output/Depth_image/Depth_image{i}.jpg", rotated_depth_image)

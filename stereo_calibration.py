@@ -22,8 +22,8 @@ objpoints = []  # 3d point in real world space
 imgpointsL = []  # 2d points in image plane.
 imgpointsR = []  # 2d points in image plane.
 
-imagesLeft = sorted(glob.glob('Data/Input/Camera_Calibration_Images/stereoLeft/*.png'))
-imagesRight = sorted(glob.glob('Data/Input/Camera_Calibration_Images/stereoRight/*.png'))
+imagesLeft = sorted(glob.glob('Data/Input/Camera_Calibration_Images/stereoLeft2/*.png'))
+imagesRight = sorted(glob.glob('Data/Input/Camera_Calibration_Images/stereoRight2987*.png'))
 global imgL, imgR, grayL, grayR
 i = 0
 
