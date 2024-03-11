@@ -12,8 +12,8 @@ points = rs.points()
 # points = pc.calculate(depth_filtered_frame)
 # vertices = np.asanyarray(points.get_vertices(dims=2))
 
-raw_vertices = np.fromfile("Data/Output/Dataset/Depth_Data/Raw_Depth/Raw_Depth10.raw", dtype=np.float32).reshape(-1, 3)
-color_raw = cv2.imread("Data/Output/Dataset/Depth_Data/Raw_Color/Raw_Color10.jpg").reshape(-1, 3)
+raw_vertices = np.fromfile("Data/Output/Dataset/Depth_Data/Raw_Depth/Raw_Depth20.raw", dtype=np.float32).reshape(-1, 3)
+color_raw = cv2.imread("Data/Output/Dataset/Depth_Data/Raw_Color/Raw_Color20.jpg").reshape(-1, 3)
 
 pcd = o3d.geometry.PointCloud()
 pcd.points = o3d.utility.Vector3dVector(raw_vertices.astype(np.float64) / 255)

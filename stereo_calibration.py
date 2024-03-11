@@ -23,7 +23,7 @@ imgpointsL = []  # 2d points in image plane.
 imgpointsR = []  # 2d points in image plane.
 
 imagesLeft = sorted(glob.glob('Data/Input/Camera_Calibration_Images/stereoLeft2/*.png'))
-imagesRight = sorted(glob.glob('Data/Input/Camera_Calibration_Images/stereoRight2987*.png'))
+imagesRight = sorted(glob.glob('Data/Input/Camera_Calibration_Images/stereoRight2/*.png'))
 global imgL, imgR, grayL, grayR
 i = 0
 
@@ -124,5 +124,8 @@ cv_file.write('stereoMapL_y', stereoMapL[1])
 cv_file.write('stereoMapR_x', stereoMapR[0])
 cv_file.write('stereoMapR_y', stereoMapR[1])
 cv_file.write('q', Q)
+cv_file.write('PL', projMatrixL)
+cv_file.write('PR', projMatrixR)
+cv_file.write('F', fundamentalMatrix)
 
 cv_file.release()

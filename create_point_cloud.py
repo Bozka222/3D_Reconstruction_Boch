@@ -58,8 +58,8 @@ stereoMapR_y = cv_file.getNode('stereoMapR_y').mat()
 Q = cv_file.getNode('q').mat()
 print(Q)
 
-imgL = cv2.imread('Data/Output/Color_image/Color_image64.jpg', cv2.IMREAD_GRAYSCALE)
-imgR = cv2.imread('Data/Output/RGB_CAM/RGB_image64.jpg', cv2.IMREAD_GRAYSCALE)
+imgL = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Left_Image/Color_image64.jpg')
+imgR = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/RGB_image64.jpg')
 
 # Show the frames
 cv2.imshow("frame right", imgR)
@@ -127,9 +127,6 @@ disparity_map = stereo.compute(imgL, imgR).astype(np.float32) / 16.0
 plt.imshow(disparity_map, 'gray')
 plt.colorbar()
 plt.show()
-
-# Generate  point cloud.
-print("\nGenerating the 3D map...")
 
 # Get new down_sampled width and height
 h, w = imgR.shape[:2]
