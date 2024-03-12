@@ -14,7 +14,7 @@ cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 cap.set(cv2.CAP_PROP_FPS, 15)
 
-num = 0
+num = 8
 
 while cap.isOpened():
 

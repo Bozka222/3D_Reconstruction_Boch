@@ -1,191 +1,61 @@
+import cv2
 import numpy as np
 import open3d as o3d
-import copy
+import pyrealsense2 as rs
 
+cv_file = cv2.FileStorage()
+cv_file.open('Data/Input/stereoMap.xml', cv2.FileStorage_READ)
 
-def draw_registration_result(source, target, transformation):
-    source_temp = copy.deepcopy(source)
-    target_temp = copy.deepcopy(target)
-    # source_temp.paint_uniform_color([1, 0.706, 0])
-    # target_temp.paint_uniform_color([0, 0.651, 0.929])
-    source_temp.transform(transformation)
-    o3d.visualization.draw_geometries([source_temp, target_temp])
+KR = cv_file.getNode('KR').mat()
+print(KR)
 
+depthmap = cv2.imread('Data/Output/PointClouds/DepthMiDaS.jpg').astype(np.float32)
+depth_image_o3d = o3d.geometry.Image(depthmap)
 
-def preprocess_point_cloud(pcd, voxel_size):
-    print(":: Downsample with a voxel size %.3f." % voxel_size)
-    pcd_down = pcd.voxel_down_sample(voxel_size)
+o3d_camera_intrinsic = o3d.camera.PinholeCameraIntrinsic(720, 1280,
+                                                          KR[0, 0], KR[0, 2],
+                                                          KR[1, 1], KR[1, 2])
+print(o3d_camera_intrinsic)
 
-    radius_normal = voxel_size * 2
-    print(":: Estimate normal with search radius %.3f." % radius_normal)
-    pcd_down.estimate_normals(
-        o3d.geometry.KDTreeSearchParamHybrid(radius=radius_normal, max_nn=30))
+# Create the point cloud from the open3d depth image
+pcd = o3d.geometry.PointCloud.create_from_depth_image(depth=depth_image_o3d, intrinsic=o3d_camera_intrinsic)
+o3d.visualization.draw_geometries([pcd], window_name="MiDaS point cloud", width=1280, height=720)
 
-    radius_feature = voxel_size * 5
-    print(":: Compute FPFH feature with search radius %.3f." % radius_feature)
-    pcd_fpfh = o3d.pipelines.registration.compute_fpfh_feature(
-        pcd_down,
-        o3d.geometry.KDTreeSearchParamHybrid(radius=radius_feature, max_nn=100))
-    return pcd_down, pcd_fpfh
-
-
-def prepare_dataset(voxel_size):
-    print(":: Load two point clouds and disturb initial pose.")
-
-    # demo_icp_pcds = o3d.data.DemoICPPointClouds()
-    # source = o3d.io.read_point_cloud(demo_icp_pcds.paths[0])
-    # target = o3d.io.read_point_cloud(demo_icp_pcds.paths[1])
-    # trans_init = np.asarray([[0.0, 0.0, 1.0, 0.0], [1.0, 0.0, 0.0, 0.0],
-    #                          [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0]])
-    # source.transform(trans_init)
-    source = o3d.io.read_point_cloud("Data/Output/PointClouds/3D_Cam/3D_Camera_PointCloud2.ply")
-    target = o3d.io.read_point_cloud("Data/Output/PointClouds/3D_Cam/3D_Camera_PointCloud1.ply")
-    source.estimate_normals()
-    source.orient_normals_consistent_tangent_plane(50)
-    target.estimate_normals()
-    target.orient_normals_consistent_tangent_plane(50)
-
-    draw_registration_result(source, target, np.identity(4))
-
-    source_down, source_fpfh = preprocess_point_cloud(source, voxel_size)
-    target_down, target_fpfh = preprocess_point_cloud(target, voxel_size)
-    return source, target, source_down, target_down, source_fpfh, target_fpfh
-
-
-def execute_global_registration(source_down, target_down, source_fpfh, target_fpfh, voxel_size):
-    distance_threshold = voxel_size * 1.5
-    print(":: RANSAC registration on downsampled point clouds.")
-    print("   Since the downsampling voxel size is %.3f," % voxel_size)
-    print("   we use a liberal distance threshold %.3f." % distance_threshold)
-    result = o3d.pipelines.registration.registration_ransac_based_on_feature_matching(
-        source_down, target_down, source_fpfh, target_fpfh, True, distance_threshold,
-        o3d.pipelines.registration.TransformationEstimationPointToPoint(False), 3, [
-            o3d.pipelines.registration.CorrespondenceCheckerBasedOnEdgeLength(0.9),
-            o3d.pipelines.registration.CorrespondenceCheckerBasedOnDistance(distance_threshold)],
-        o3d.pipelines.registration.RANSACConvergenceCriteria(100000, 0.999))
-    return result
-
-
-def refine_registration(source, target, source_fpfh, target_fpfh, voxel_size):
-    distance_threshold = voxel_size * 0.4
-    print(":: Point-to-plane ICP registration is applied on original point")
-    print("   clouds to refine the alignment. This time we use a strict")
-    print("   distance threshold %.3f." % distance_threshold)
-    result = o3d.pipelines.registration.registration_icp(
-        source, target, distance_threshold, result_ransac.transformation,
-        o3d.pipelines.registration.TransformationEstimationPointToPlane())
-    return result
-
-
-voxel_size = 0.0001  # means 5cm for this dataset
-source, target, source_down, target_down, source_fpfh, target_fpfh = prepare_dataset(voxel_size)
-
-result_ransac = execute_global_registration(source_down, target_down, source_fpfh, target_fpfh, voxel_size)
-print(result_ransac)
-draw_registration_result(source_down, target_down, result_ransac.transformation)
-
-result_icp = refine_registration(source, target, source_fpfh, target_fpfh, voxel_size)
-print(result_icp)
-draw_registration_result(source, target, result_icp.transformation)
-
-
-
-# print("Initial alignment")
-# evaluation = o3d.pipelines.registration.evaluate_registration(source, target, threshold, trans_init)
-# print(evaluation)
-
-# voxel_size = 0.02
-# max_correspondence_distance_coarse = voxel_size * 15
-# max_correspondence_distance_fine = voxel_size * 1.5
+# # Create pipeline and config
+# pipeline = rs.pipeline()
+# config = rs.config()
 #
+# # Set configuration parameters for streams,  Open CV supports BGRA formats!!!!
+# config.enable_stream(rs.stream.color, 1280, 720, format=rs.format.bgr8, framerate=30)
+# config.enable_stream(rs.stream.depth, 1280, 720, format=rs.format.z16, framerate=30)
 #
-# def load_point_clouds():
-#     pcds = []
-#     for i in range(7):
-#         pcd = o3d.io.read_point_cloud("Data/Output/PointClouds/3D_Cam/3D_Camera_PointCloud%d.ply" % i)
-#         # pcd_down = o3d.geometry.PointCloud.voxel_down_sample(pcd, voxel_size=voxel_size)
-#         pcds.append(pcd)
-#     return pcds
+# # Start pipeline with configuration
+# profile = pipeline.start(config)
 #
+# # Get intrinsic
+# depth_stream = profile.get_stream(rs.stream.depth)
+# color_stream = profile.get_stream(rs.stream.color)
+# depth_intrinsics = depth_stream.as_video_stream_profile().get_intrinsics()
+# color_intrinsics = color_stream.as_video_stream_profile().get_intrinsics()
 #
-# def pairwise_registration(source, target):
-#     print("Apply point-to-plane ICP")
-#     icp_coarse = o3d.pipelines.registration.registration_icp(
-#         source, target, max_correspondence_distance_coarse, np.identity(4),
-#         o3d.pipelines.registration.TransformationEstimationPointToPlane())
-#     icp_fine = o3d.pipelines.registration.registration_icp(
-#         source, target, max_correspondence_distance_fine,
-#         icp_coarse.transformation,
-#         o3d.pipelines.registration.TransformationEstimationPointToPlane())
-#     transformation_icp = icp_fine.transformation
-#     information_icp = o3d.pipelines.registration.get_information_matrix_from_point_clouds(
-#         source, target, max_correspondence_distance_fine,
-#         icp_fine.transformation)
-#     return transformation_icp, information_icp
+# # raw_vertices = np.fromfile('Data/Output/Dataset/Depth_Data/Raw_Depth/Raw_Depth4.raw', dtype=np.float32).reshape(-1, 3)
+# # print(raw_vertices.shape)
+# # color_raw = cv2.imread('Data/Output/Dataset/Depth_Data/Raw_Color/Raw_Color4.jpg', cv2.IMREAD_GRAYSCALE)
+# # print(color_raw)
+# # cv2.imshow("raw_color", color_raw)
+# # cv2.waitKey(0)
+# # print(color_raw.shape)
 #
+# pcd_load = o3d.io.read_point_cloud("Data/Output/PointClouds/3D_Cam/3D_Camera_PointCloud4.ply")
+# vertices = np.asarray(pcd_load.points)
+# print(vertices.shape)
 #
-# def full_registration(pcds, max_correspondence_distance_coarse, max_correspondence_distance_fine):
-#     pose_graph = o3d.pipelines.registration.PoseGraph()
-#     odometry = np.identity(4)
-#     pose_graph.nodes.append(o3d.pipelines.registration.PoseGraphNode(odometry))
-#     n_pcds = len(pcds)
-#     for source_id in range(n_pcds):
-#         for target_id in range(source_id + 1, n_pcds):
-#             transformation_icp, information_icp = pairwise_registration(
-#                 pcds[source_id], pcds[target_id])
-#             print("Build o3d.registration.PoseGraph")
-#             if target_id == source_id + 1:  # odometry case
-#                 odometry = np.dot(transformation_icp, odometry)
-#                 pose_graph.nodes.append(o3d.pipelines.registration.PoseGraphNode(np.linalg.inv(odometry)))
-#                 pose_graph.edges.append(o3d.pipelines.registration.PoseGraphEdge(source_id,
-#                                                                                  target_id,
-#                                                                                  transformation_icp,
-#                                                                                  information_icp,
-#                                                                                  uncertain=False))
-#             else:  # loop closure case
-#                 pose_graph.edges.append(
-#                     o3d.pipelines.registration.PoseGraphEdge(source_id,
-#                                                              target_id,
-#                                                              transformation_icp,
-#                                                              information_icp,
-#                                                              uncertain=True))
-#     return pose_graph
-#
-#
-# o3d.utility.set_verbosity_level(o3d.utility.VerbosityLevel.Debug)
-# pcds_down = load_point_clouds()
-# o3d.visualization.draw_geometries(pcds_down)
-# pcds_with_normals = []
-#
-# for pcd in pcds_down:
-#     pcd.estimate_normals()
-#     pcd.orient_normals_consistent_tangent_plane(50)
-#     pcds_with_normals.append(pcd)
-#
-#
-# print("Full registration ...")
-# pose_graph = full_registration(pcds_with_normals, max_correspondence_distance_coarse, max_correspondence_distance_fine)
-#
-# print("Optimizing PoseGraph ...")
-# option = o3d.pipelines.registration.GlobalOptimizationOption(max_correspondence_distance=max_correspondence_distance_fine,
-#                                                    edge_prune_threshold=0.25,
-#                                                    reference_node=0)
-# o3d.pipelines.registration.global_optimization(pose_graph, o3d.pipelines.registration.GlobalOptimizationLevenbergMarquardt(),
-#                                      o3d.pipelines.registration.GlobalOptimizationConvergenceCriteria(), option)
-#
-# print("Transform points and display")
-# for point_id in range(len(pcds_with_normals)):
-#     print(pose_graph.nodes[point_id].pose)
-#     pcds_with_normals[point_id].transform(pose_graph.nodes[point_id].pose)
-# o3d.visualization.draw_geometries(pcds_with_normals)
-#
-# print("Make a combined point cloud")
-# pcds = load_point_clouds()
-# pcd_combined = o3d.geometry.PointCloud()
-# for point_id in range(len(pcds)):
-#     pcds[point_id].transform(pose_graph.nodes[point_id].pose)
-#     pcd_combined += pcds[point_id]
-# # pcd_combined_down = o3d.geometry.voxel_down_sample(pcd_combined, voxel_size=voxel_size)
-#
-# o3d.io.write_point_cloud("multiway_registration.pcd", pcd_combined)
-# o3d.visualization.draw_geometries([pcd_combined])
+# pixel_coordinates = []
+# for vertex in vertices:
+#     color_pixel_coordinate = rs.rs2_project_point_to_pixel(color_intrinsics, vertex)
+#     pixel_coordinates.append(color_pixel_coordinate)
+# print(pixel_coordinates)
+# right_image = cv2.imread("Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image5.jpg", cv2.IMREAD_GRAYSCALE)
+# cv2.imshow("Right Image", right_image)
+# cv2.waitKey(0)
+# # depth_point = rs.rs2_deproject_pixel_to_point(depth_intrinsics, depth_pixel)

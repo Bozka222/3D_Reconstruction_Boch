@@ -56,10 +56,10 @@ from PIL import Image
 # cv2.destroyAllWindows()
 
 # Store path of the image in the variable input_path
-input_path = "Data/Output/Depth_image/RGB_image0.jpg"
+input_path = "Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image5.jpg"
 
 # Store path of the output image in the variable output_path
-output_path = "Data/Input/Img_without_BG/RGB_image0.png"
+output_path = "Data/Input/Img_without_BG/Stereo_Right_Image5.png"
 
 # Processing the image
 input = Image.open(input_path)

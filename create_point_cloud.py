@@ -58,8 +58,8 @@ stereoMapR_y = cv_file.getNode('stereoMapR_y').mat()
 Q = cv_file.getNode('q').mat()
 print(Q)
 
-imgL = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Left_Image/Color_image64.jpg')
-imgR = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/RGB_image64.jpg')
+imgL = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Left_Image/Stereo_Left_Image4.jpg')
+imgR = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image5.jpg')
 
 # Show the frames
 cv2.imshow("frame right", imgR)
@@ -74,7 +74,6 @@ imgL = cv2.remap(imgL, stereoMapL_x, stereoMapL_y, cv2.INTER_LANCZOS4, cv2.BORDE
 # Show the frames
 cv2.imshow("frame right", imgR)
 cv2.imshow("frame left", imgL)
-
 cv2.waitKey(0)
 
 # Down_sample each image 3 times (because they're too big)
@@ -97,9 +96,9 @@ stereo = cv2.StereoSGBM.create(minDisparity=min_disp,
                                blockSize=window_size,
                                P1=5*3*window_size**2,
                                P2=32*3*window_size**2,
-                               disp12MaxDiff=10,
+                               disp12MaxDiff=12,
                                uniquenessRatio=1,
-                               speckleWindowSize=1,
+                               speckleWindowSize=2,
                                speckleRange=2,
                                preFilterCap=63,
                                mode=cv2.STEREO_SGBM_MODE_SGBM)
@@ -142,13 +141,13 @@ colors = cv2.cvtColor(imgL, cv2.COLOR_BGR2RGB)
 output_colors = colors[disparity_map > disparity_map.min()]
 
 pcd = o3d.geometry.PointCloud()
-pcd.points = o3d.utility.Vector3dVector(output_points)
-pcd.colors = o3d.utility.Vector3dVector(output_colors / 255.0)
+pcd.points = o3d.utility.Vector3dVector(output_points.astype(np.float64) / 255.0)
+pcd.colors = o3d.utility.Vector3dVector(output_colors.astype(np.float64) / 255.0)
 
 # Visualize the point cloud
 pcd.transform([[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]])
-o3d.visualization.draw_geometries([pcd], window_name="Stereo point cloud", width=1280, height=720)
 
+o3d.visualization.draw_geometries([pcd], window_name="Stereo point cloud", width=1280, height=720)
 o3d.io.write_point_cloud("Data/Output/PointClouds/Stereo/Stereo_PointCloud.ply", pcd)
 
 # # Define name for output file

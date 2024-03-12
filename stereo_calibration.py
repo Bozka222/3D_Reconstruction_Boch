@@ -127,5 +127,6 @@ cv_file.write('q', Q)
 cv_file.write('PL', projMatrixL)
 cv_file.write('PR', projMatrixR)
 cv_file.write('F', fundamentalMatrix)
+cv_file.write('KR', newCameraMatrixR)
 
 cv_file.release()

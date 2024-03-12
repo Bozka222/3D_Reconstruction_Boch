@@ -15,9 +15,14 @@ profile = pipeline.start(config)
 
 # Get intrinsic
 depth_stream = profile.get_stream(rs.stream.depth)
-intrinsic = depth_stream.as_video_stream_profile().get_intrinsics()
-print(intrinsic)
-intrinsic_mat = np.array([[intrinsic.fx, 0, intrinsic.ppx], [0, intrinsic.fy, intrinsic.ppy], [0, 0, 1]])
+color_stream = profile.get_stream(rs.stream.color)
+depth_intrinsics = depth_stream.as_video_stream_profile().get_intrinsics()
+color_intrinsics = color_stream.as_video_stream_profile().get_intrinsics()
+
+print("\n Depth intrinsics: " + str(depth_intrinsics))
+print("\n Color intrinsics: " + str(color_intrinsics))
+
+intrinsic_mat = np.array([[depth_intrinsics.fx, 0, depth_intrinsics.ppx], [0, depth_intrinsics.fy, depth_intrinsics.ppy], [0, 0, 1]])
 print(intrinsic_mat)
 
 print("Saving parameters!")
