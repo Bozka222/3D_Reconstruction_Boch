@@ -13,11 +13,23 @@ def draw_registration_result_original_color(source, target, transformation):
                                       up=[0.3109, -0.5878, -0.7468])
 
 
-dataset = o3d.data.PLYPointCloud()
-pcd = o3d.io.read_point_cloud(dataset.path)
-print("1. Load two point clouds and show initial pose")
-source = o3d.io.read_point_cloud("Data/Input/open3D_test_files/frag_115.ply")
-target = o3d.io.read_point_cloud("Data/Input/open3D_test_files/frag_116.ply")
+# dataset = o3d.data.PLYPointCloud()
+# pcd = o3d.io.read_point_cloud(dataset.path)
+# print("1. Load two point clouds and show initial pose")
+# source = o3d.io.read_point_cloud("Data/Input/open3D_test_files/frag_115.ply")
+# target = o3d.io.read_point_cloud("Data/Input/open3D_test_files/frag_116.ply")
+
+
+source = o3d.io.read_point_cloud("Data/Output/PointClouds/3D_Cam/3D_Camera_PointCloud3.ply")
+target = o3d.io.read_point_cloud("Data/Output/PointClouds/3D_Cam/3D_Camera_PointCloud4.ply")
+
+source.estimate_normals()
+source.orient_normals_consistent_tangent_plane(100)
+o3d.visualization.draw_geometries([source], point_show_normal=True)
+
+target.estimate_normals()
+target.orient_normals_consistent_tangent_plane(100)
+o3d.visualization.draw_geometries([target], point_show_normal=True)
 
 # draw initial alignment
 current_transformation = np.identity(4)
@@ -31,8 +43,7 @@ result_icp = o3d.pipelines.registration.registration_icp(
     source, target, 0.02, current_transformation,
     o3d.pipelines.registration.TransformationEstimationPointToPlane())
 print(result_icp)
-draw_registration_result_original_color(source, target,
-                                        result_icp.transformation)
+draw_registration_result_original_color(source, target, result_icp.transformation)
 
 # colored point-cloud registration
 # This is implementation of following paper
@@ -68,5 +79,5 @@ for scale in range(3):
                                                                    max_iteration=iter))
     current_transformation = result_icp.transformation
     print(result_icp)
-draw_registration_result_original_color(source, target,
-                                        result_icp.transformation)
+draw_registration_result_original_color(source, target, result_icp.transformation)
+o3d.io.write_point_cloud(f"Data/Output/PointClouds/3D_Cam/3D_Camera_PointCloud_Merged.ply", current_transformation, format="ply")

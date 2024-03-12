@@ -40,11 +40,8 @@ P2 = cv_file.getNode('PR').mat()
 F = cv_file.getNode('F').mat()
 print(Q)
 
-imgL = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Left_Image/Color_image51.jpg')
-imgR = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/RGB_image51.jpg')
-
-imgLgray = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Left_Image/Color_image51.jpg', cv2.IMREAD_GRAYSCALE)
-imgRgray = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/RGB_image51.jpg', cv2.IMREAD_GRAYSCALE)
+imgL = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Left_Image/Stereo_Left_Image29.jpg', cv2.IMREAD_GRAYSCALE )
+imgR = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image29.jpg', cv2.IMREAD_GRAYSCALE)
 
 # Show the frames
 cv2.imshow("frame right", imgR)
@@ -66,7 +63,7 @@ keyPointsLeft, descriptorsLeft = sift.detectAndCompute(imgL, None)
 keyPointsRight, descriptorsRight = sift.detectAndCompute(imgR, None)
 
 # FLANN Parameters
-FLANN_INDEX_KDTREE = 0
+FLANN_INDEX_KDTREE = 1
 index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=5)
 search_params = dict(checks=50)
 
@@ -101,18 +98,16 @@ pts2 = np.array(pts2)
 # Find epilines corresponding to points in right image (second image) and drawing its lines on left image
 lines1 = cv2.computeCorrespondEpilines(pts2.reshape(-1, 1, 2), 2, F)
 lines1 = lines1.reshape(-1, 3)
-img5, img6 = drawlines(imgLgray, imgRgray, lines1, np.int32(pts1), np.int32(pts2))
+img5, img6 = drawlines(imgL, imgR, lines1, np.int32(pts1), np.int32(pts2))
 
 # Find epilines corresponding to points in left image (first image) and drawing its lines on right image
 lines2 = cv2.computeCorrespondEpilines(pts1.reshape(-1, 1, 2), 1, F)
 lines2 = lines2.reshape(-1, 3)
-img3, img4 = drawlines(imgLgray, imgRgray, lines2, np.int32(pts1), np.int32(pts2))
+img3, img4 = drawlines(imgL, imgR, lines2, np.int32(pts1), np.int32(pts2))
 
-# Display
-cv2.imshow('IMG L', img5)
-cv2.waitKey(0)
-cv2.imshow('IMG L', img3)
-cv2.waitKey(0)
+plt.subplot(121),plt.imshow(img5)
+plt.subplot(122),plt.imshow(img3)
+plt.show()
 
 # Triangulation
 pts1 = np.transpose(pts1)

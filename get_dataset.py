@@ -96,19 +96,19 @@ while True:
 
     j += 1
 
-    # vertices.astype("float32").tofile(f"Data/Output/Dataset/Depth_Data/Raw_Depth/Raw_Depth{i}.raw")
-    # cv2.imwrite(f"Data/Output/Dataset/Depth_Data/Raw_Color/Raw_Color{i}.jpg", blue_image)
-    # cv2.imwrite(f"Data/Output/Dataset/Depth_Data/Depth_Color_Image/Depth_Color_Image{i}.jpg", rotated_depth_colormap)
-    # cv2.imwrite(f"Data/Output/Dataset/Stereo_Data/Stereo_Left_Image/Stereo_Left_Image{i}.jpg", rotated_color_image)
-    # cv2.imwrite(f"Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image{i}.jpg", rotated_RGB_image)
-    # key = cv2.waitKey(1)
-
-    vertices.astype("float32").tofile(f"../dataset/new/vozidlo1/Raw_Depth{i}.raw")
-    cv2.imwrite(f"../dataset/new/vozidlo1/Raw_Color{i}.jpg", blue_image)
-    cv2.imwrite(f"../dataset/new/vozidlo1/Depth_Color_Image{i}.jpg", rotated_depth_colormap)
-    cv2.imwrite(f"../dataset/new/vozidlo1/Stereo_Left_Image{i}.jpg", rotated_color_image)
-    cv2.imwrite(f"../dataset/new/vozidlo1/Stereo_Right_Image{i}.jpg", rotated_RGB_image)
+    vertices.astype("float32").tofile(f"Data/Output/Dataset/Depth_Data/Raw_Depth/Raw_Depth{i}.raw")
+    cv2.imwrite(f"Data/Output/Dataset/Depth_Data/Raw_Color/Raw_Color{i}.jpg", blue_image)
+    cv2.imwrite(f"Data/Output/Dataset/Depth_Data/Depth_Color_Image/Depth_Color_Image{i}.jpg", rotated_depth_colormap)
+    cv2.imwrite(f"Data/Output/Dataset/Stereo_Data/Stereo_Left_Image/Stereo_Left_Image{i}.jpg", rotated_color_image)
+    cv2.imwrite(f"Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image{i}.jpg", rotated_RGB_image)
     key = cv2.waitKey(1)
+
+    # vertices.astype("float32").tofile(f"../dataset/new/vozidlo5/Raw_Depth{i}.raw")
+    # cv2.imwrite(f"../dataset/new/vozidlo5/Raw_Color{i}.jpg", blue_image)
+    # cv2.imwrite(f"../dataset/new/vozidlo5/Depth_Color_Image{i}.jpg", rotated_depth_colormap)
+    # cv2.imwrite(f"../dataset/new/vozidlo5/Stereo_Left_Image{i}.jpg", rotated_color_image)
+    # cv2.imwrite(f"../dataset/new/vozidlo5/Stereo_Right_Image{i}.jpg", rotated_RGB_image)
+    # key = cv2.waitKey(1)
 
     i += 1
     if key == ord("\x1b"):  # End stream when pressing ESC
@@ -118,17 +118,17 @@ pipeline.stop()
 vid.release()
 cv2.destroyAllWindows()
 
-# with open(f"Data/Output/Dataset/Metadata/Metadata_3D.txt", "w") as metadata_file_1:
-#     metadata_file_1.write(json.dumps(metadata_3D))
-#
-# with open(f"Data/Output/Dataset/Metadata/Metadata_RGB.txt", "w") as metadata_file_2:
-#     metadata_file_2.write(json.dumps(metadata_RGB))
-
-with open(f"../dataset/new/vozidlo1/Metadata_3D.txt", "w") as metadata_file_1:
+with open(f"Data/Output/Dataset/Metadata/Metadata_3D.txt", "w") as metadata_file_1:
     metadata_file_1.write(json.dumps(metadata_3D))
 
-with open(f"../dataset/new/vozidlo1/Metadata_RGB.txt", "w") as metadata_file_2:
+with open(f"Data/Output/Dataset/Metadata/Metadata_RGB.txt", "w") as metadata_file_2:
     metadata_file_2.write(json.dumps(metadata_RGB))
+
+# with open(f"../dataset/new/vozidlo5/Metadata_3D.txt", "w") as metadata_file_1:
+#     metadata_file_1.write(json.dumps(metadata_3D))
+#
+# with open(f"../dataset/new/vozidlo5/Metadata_RGB.txt", "w") as metadata_file_2:
+#     metadata_file_2.write(json.dumps(metadata_RGB))
 
 print(metadata_3D)
 print(metadata_RGB)

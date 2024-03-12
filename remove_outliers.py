@@ -12,7 +12,7 @@ def display_inlier_outlier(cloud, ind):
 
 
 print("Load a ply point cloud, print it, and render it")
-pcd = o3d.io.read_point_cloud("Data/Output/PointClouds/3D_Cam/3D_Camera_PointCloud.ply")
+pcd = o3d.io.read_point_cloud("Data/Output/PointClouds/3D_Cam/MergedPointCloud_Skoda.ply")
 # o3d.visualization.draw_geometries([pcd])
 
 
