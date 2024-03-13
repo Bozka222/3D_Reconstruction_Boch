@@ -25,7 +25,8 @@ for raw_depth, raw_color in zip(raw_depths, raw_colors):
     pcd.points = o3d.utility.Vector3dVector(raw_vertices.astype(np.float64) / 255)
     pcd.colors = o3d.utility.Vector3dVector(color_raw.astype(np.float64) / 255)
     pcd.transform([[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]])
-    o3d.io.write_point_cloud(f"Data/Output/PointClouds/3D_Cam/3D_Camera_PointCloud_Uncropped{i}.ply", pcd, format="ply")
+    o3d.io.write_point_cloud(f"Data/Output/PointClouds/3D_Cam/Uncropped/3D_Cam_PointCloud_Uncropped{i}.ply",
+                             pcd, format="ply")
 
     # corners = np.array([[0.005, 0.009, -0.005],  # Skoda Corners
     #                     [0.005, -0.010, -0.005],
@@ -78,5 +79,6 @@ for raw_depth, raw_color in zip(raw_depths, raw_colors):
     # o3d.visualization.draw_geometries([cropped_pcd, bounding_box])
 
     # o3d.visualization.draw_geometries([car])
-    o3d.io.write_point_cloud(f"Data/Output/PointClouds/3D_Cam/3D_Camera_PointCloud{i}.ply", cropped_pcd, format="ply")
+    o3d.io.write_point_cloud(f"Data/Output/PointClouds/3D_Cam/Cropped/3D_Cam_PointCloud_Cropped{i}.ply",
+                             cropped_pcd, format="ply")
     i += 1

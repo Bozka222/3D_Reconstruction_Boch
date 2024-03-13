@@ -59,7 +59,7 @@ Q = cv_file.getNode('q').mat()
 print(Q)
 
 imgL = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Left_Image/Stereo_Left_Image4.jpg')
-imgR = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image5.jpg')
+imgR = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image0.jpg')
 
 # Show the frames
 cv2.imshow("frame right", imgR)

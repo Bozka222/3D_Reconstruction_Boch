@@ -41,7 +41,7 @@ F = cv_file.getNode('F').mat()
 print(Q)
 
 imgL = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Left_Image/Stereo_Left_Image5.jpg', cv2.IMREAD_GRAYSCALE)
-imgR = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image5.jpg', cv2.IMREAD_GRAYSCALE)
+imgR = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image0.jpg', cv2.IMREAD_GRAYSCALE)
 
 # Show the frames
 cv2.imshow("frame right", imgR)
