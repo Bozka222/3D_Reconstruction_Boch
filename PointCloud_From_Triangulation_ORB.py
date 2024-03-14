@@ -25,6 +25,7 @@ def drawlines(img1, img2, lines, pts1, pts2):
                           tuple(pt2), 5, color, -1)
     return img1, img2
 
+
 # Camera parameters to undistort and rectify images
 cv_file = cv2.FileStorage()
 cv_file.open('Data/Input/stereoMap.xml', cv2.FileStorage_READ)
@@ -34,14 +35,12 @@ stereoMapL_y = cv_file.getNode('stereoMapL_y').mat()
 stereoMapR_x = cv_file.getNode('stereoMapR_x').mat()
 stereoMapR_y = cv_file.getNode('stereoMapR_y').mat()
 
-Q = cv_file.getNode('q').mat()
 P1 = cv_file.getNode('PL').mat()
 P2 = cv_file.getNode('PR').mat()
 F = cv_file.getNode('F').mat()
-print(Q)
 
-imgL = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Left_Image/Stereo_Left_Image5.jpg', cv2.IMREAD_GRAYSCALE)
-imgR = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image0.jpg', cv2.IMREAD_GRAYSCALE)
+imgL = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Left_Image/Stereo_Left_Image3.jpg', cv2.IMREAD_GRAYSCALE)
+imgR = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image4.jpg', cv2.IMREAD_GRAYSCALE)
 
 # Show the frames
 cv2.imshow("frame right", imgR)
@@ -58,38 +57,95 @@ cv2.imshow("frame left", imgL)
 cv2.waitKey(0)
 
 # Detect the SIFT key points and compute the descriptors for the two images
-sift = cv2.SIFT.create()
-keyPointsLeft, descriptorsLeft = sift.detectAndCompute(imgL, None)
-keyPointsRight, descriptorsRight = sift.detectAndCompute(imgR, None)
+orb = cv2.BRISK.create()
 
-# FLANN Parameters
-FLANN_INDEX_KDTREE = 1
-index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=5)
-search_params = dict(checks=50)
+# FREAK FEATURE DESCRIPTOR
+# freak = cv2.xfeatures2d.FREAK.create()
+# star = cv2.xfeatures2d.StarDetector.create()
+# keyPointsLeft = star.detect(imgL, None)
+# keyPointsRight = star.detect(imgR, None)
+# keyPointsLeft, descriptorsLeft = freak.compute(imgL, keyPointsLeft)
+# keyPointsRight, descriptorsRight = freak.compute(imgR, keyPointsRight)
 
-# FLANN Matcher
-flann = cv2.FlannBasedMatcher(index_params, search_params)
+# # BRIEF DETECTOR
+# # Initiate FAST detector
+# star = cv2.xfeatures2d.StarDetector.create()
+# # Initiate BRIEF extractor
+# brief = cv2.xfeatures2d.BriefDescriptorExtractor.create()
+# # find the keypoints with STAR
+# keyPointsLeft = star.detect(imgL, None)
+# keyPointsRight = star.detect(imgR, None)
+# # compute the descriptors with BRIEF
+# keyPointsLeft, descriptorsLeft = brief.compute(imgL, keyPointsLeft)
+# keyPointsRight, descriptorsRight = brief.compute(imgR, keyPointsRight)
 
-# Matching
-matches = flann.knnMatch(descriptorsLeft, descriptorsRight, k=2)
+keyPointsLeft, descriptorsLeft = orb.detectAndCompute(imgL, None)
+keyPointsRight, descriptorsRight = orb.detectAndCompute(imgR, None)
+
+# draw only keypoints location,not size and orientation
+keypointsL = cv2.drawKeypoints(imgL, keyPointsLeft, None, color=(0, 255, 0), flags=0)
+keypointsR = cv2.drawKeypoints(imgR, keyPointsRight, None, color=(0, 255, 0), flags=0)
+plt.imshow(keypointsL)
+plt.show()
+
+# # FLANN Parameters
+# FLANN_INDEX_LSH = 6
+# flann_params = dict(algorithm=FLANN_INDEX_LSH,
+#                     table_number=6,
+#                     key_size=12,
+#                     multi_probe_level=1)
+# search_params = dict(checks=500)
+#
+# # FLANN Matcher
+# flann = cv2.FlannBasedMatcher(flann_params, search_params)
+#
+# # Matching
+# matches = flann.knnMatch(descriptorsLeft, descriptorsRight, k=2)
+# print(matches)
+# good = []
+# pts1 = []
+# pts2 = []
+#
+# # Get Matched points under distance's threshold
+# for (m, n) in enumerate(matches):
+#     if m.distance < 1.0 * n.distance:
+#         good.append([m])
+#         pts2.append(keyPointsRight[m.trainIdx].pt)
+#         pts1.append(keyPointsLeft[m.queryIdx].pt)
+#
+# # Draws the small circles on the locations of keypoints
+# img_matched = cv2.drawMatchesKnn(imgL, keyPointsLeft, imgR, keyPointsRight, good, None, flags=2)
+# cv2.imshow("Matches", img_matched)
+# cv2.waitKey(0)
+#
+# # Print number of matched feature points
+# print('Matched Num:', len(pts1))
+
+# Create a Brute Force Matcher object.
+bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+
+# Perform the matching between the ORB descriptors of the training image and the test image
+matches = bf.match(descriptorsLeft, descriptorsRight)
+
+# The matches with shorter distance are the ones we want.
+matches = sorted(matches, key=lambda x: x.distance)
+print(matches)
 good = []
 pts1 = []
 pts2 = []
 
 # Get Matched points under distance's threshold
-for i, (m, n) in enumerate(matches):
-    if m.distance < 0.8 * n.distance:
-        good.append([m])
-        pts2.append(keyPointsRight[m.trainIdx].pt)
-        pts1.append(keyPointsLeft[m.queryIdx].pt)
+for m in matches:
+    good.append([m])
+    pts2.append(keyPointsRight[m.trainIdx].pt)
+    pts1.append(keyPointsLeft[m.queryIdx].pt)
 
-# Draws the small circles on the locations of keypoints
-img_matched = cv2.drawMatchesKnn(imgL, keyPointsLeft, imgR, keyPointsRight, good, None, flags=2)
+img_matched = cv2.drawMatches(imgL, keyPointsLeft, imgR, keyPointsRight, matches, None, flags=2)
 cv2.imshow("Matches", img_matched)
 cv2.waitKey(0)
 
-# Print number of matched feature points
-print('Matched Num:', len(pts1))
+# Print total number of matching points between the training and query images
+print("\nNumber of Matching Keypoints Between The Training and Query Images: ", len(matches))
 
 # Set array for keypoints
 pts1 = np.array(pts1)
@@ -105,8 +161,8 @@ lines2 = cv2.computeCorrespondEpilines(pts1.reshape(-1, 1, 2), 1, F)
 lines2 = lines2.reshape(-1, 3)
 img3, img4 = drawlines(imgL, imgR, lines2, np.int32(pts1), np.int32(pts2))
 
-plt.subplot(121),plt.imshow(img5)
-plt.subplot(122),plt.imshow(img3)
+plt.subplot(121), plt.imshow(img5)
+plt.subplot(122), plt.imshow(img3)
 plt.show()
 
 # Triangulation
@@ -153,9 +209,5 @@ for i in range(len(point_color)):
 # add position and color to point cloud
 pcd.points = o3d.utility.Vector3dVector(pc_points)
 pcd.colors = o3d.utility.Vector3dVector(pc_color)
-o3d.visualization.draw_geometries([pcd],
-                                  zoom=0.0412,
-                                  front=[0.4257, -0.2125, -0.8795],
-                                  lookat=[2.6172, 2.0475, 1.532],
-                                  up=[-0.0694, -0.9768, 0.2024])
+o3d.visualization.draw_geometries([pcd])
 cv2.destroyAllWindows()
