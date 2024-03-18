@@ -22,11 +22,15 @@ color_intrinsics = color_stream.as_video_stream_profile().get_intrinsics()
 print("\n Depth intrinsics: " + str(depth_intrinsics))
 print("\n Color intrinsics: " + str(color_intrinsics))
 
-intrinsic_mat = np.array([[depth_intrinsics.fx, 0, depth_intrinsics.ppx], [0, depth_intrinsics.fy, depth_intrinsics.ppy], [0, 0, 1]])
-print(intrinsic_mat)
+intrinsic_mat_depth = np.array([[depth_intrinsics.fx, 0, depth_intrinsics.ppx], [0, depth_intrinsics.fy, depth_intrinsics.ppy], [0, 0, 1]])
+print(intrinsic_mat_depth)
+
+intrinsic_mat_color = np.array([[color_intrinsics.fx, 0, color_intrinsics.ppx], [0, color_intrinsics.fy, color_intrinsics.ppy], [0, 0, 1]])
+print(intrinsic_mat_color)
 
 print("Saving parameters!")
 cv_file = cv.FileStorage('Data/Input/3D_intrinsic.xml', cv.FILE_STORAGE_WRITE)
-cv_file.write('Intrinsic', intrinsic_mat)
+cv_file.write('Intrinsic_Depth', intrinsic_mat_depth)
+cv_file.write('Intrinsic_Color', intrinsic_mat_color)
 
 cv_file.release()

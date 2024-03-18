@@ -32,7 +32,7 @@ color_sensor = profile.get_device().query_sensors()[1]
 color_sensor.set_option(rs.option.global_time_enabled, 1)
 
 # Set RGB Camera
-vid = cv2.VideoCapture(3, cv2.CAP_DSHOW)
+vid = cv2.VideoCapture(1, cv2.CAP_DSHOW)
 # vid.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
 # vid.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 # vid.set(cv2.CAP_PROP_FPS, 15)
@@ -73,9 +73,9 @@ while True:
     cropped_img = RGB_frame[0:720, 0:1280]
 
     # Rotate images to show them
-    rotated_depth_colormap = cv2.rotate(depth_colormap, cv2.ROTATE_90_CLOCKWISE)
-    rotated_color_image = cv2.rotate(color_image, cv2.ROTATE_90_CLOCKWISE)
-    rotated_RGB_image = cv2.rotate(cropped_img, cv2.ROTATE_90_CLOCKWISE)
+    rotated_depth_colormap = cv2.rotate(depth_colormap, cv2.ROTATE_90_COUNTERCLOCKWISE)
+    rotated_color_image = cv2.rotate(color_image, cv2.ROTATE_90_COUNTERCLOCKWISE)
+    rotated_RGB_image = cv2.rotate(cropped_img, cv2.ROTATE_90_COUNTERCLOCKWISE)
 
     cv2.imshow("Color_Image", rotated_color_image)
     cv2.imshow("Color_Image_ForDepth", rotated_depth_colormap)
@@ -96,19 +96,19 @@ while True:
 
     j += 1
 
-    vertices.astype("float32").tofile(f"Data/Output/Dataset/Depth_Data/Raw_Depth/Raw_Depth{i}.raw")
-    cv2.imwrite(f"Data/Output/Dataset/Depth_Data/Raw_Color/Raw_Color{i}.jpg", blue_image)
-    cv2.imwrite(f"Data/Output/Dataset/Depth_Data/Depth_Color_Image/Depth_Color_Image{i}.jpg", rotated_depth_colormap)
-    cv2.imwrite(f"Data/Output/Dataset/Stereo_Data/Stereo_Left_Image/Stereo_Left_Image{i}.jpg", rotated_color_image)
-    cv2.imwrite(f"Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image{i}.jpg", rotated_RGB_image)
-    key = cv2.waitKey(1)
-
-    # vertices.astype("float32").tofile(f"../dataset/new/vozidlo5/Raw_Depth{i}.raw")
-    # cv2.imwrite(f"../dataset/new/vozidlo5/Raw_Color{i}.jpg", blue_image)
-    # cv2.imwrite(f"../dataset/new/vozidlo5/Depth_Color_Image{i}.jpg", rotated_depth_colormap)
-    # cv2.imwrite(f"../dataset/new/vozidlo5/Stereo_Left_Image{i}.jpg", rotated_color_image)
-    # cv2.imwrite(f"../dataset/new/vozidlo5/Stereo_Right_Image{i}.jpg", rotated_RGB_image)
+    # vertices.astype("float32").tofile(f"Data/Output/Dataset/Depth_Data/Raw_Depth/Raw_Depth{i}.raw")
+    # cv2.imwrite(f"Data/Output/Dataset/Depth_Data/Raw_Color/Raw_Color{i}.jpg", blue_image)
+    # cv2.imwrite(f"Data/Output/Dataset/Depth_Data/Depth_Color_Image/Depth_Color_Image{i}.jpg", rotated_depth_colormap)
+    # cv2.imwrite(f"Data/Output/Dataset/Stereo_Data/Stereo_Left_Image/Stereo_Left_Image{i}.jpg", rotated_color_image)
+    # cv2.imwrite(f"Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image{i}.jpg", rotated_RGB_image)
     # key = cv2.waitKey(1)
+
+    vertices.astype("float32").tofile(f"../dataset/new_3D_Up/vozidlo3/Raw_Depth{i}.raw")
+    cv2.imwrite(f"../dataset/new_3D_Up/vozidlo3/Raw_Color{i}.jpg", blue_image)
+    cv2.imwrite(f"../dataset/new_3D_Up/vozidlo3/Depth_Color_Image{i}.jpg", rotated_depth_colormap)
+    cv2.imwrite(f"../dataset/new_3D_Up/vozidlo3/Stereo_Left_Image{i}.jpg", rotated_color_image)
+    cv2.imwrite(f"../dataset/new_3D_Up/vozidlo3/Stereo_Right_Image{i}.jpg", rotated_RGB_image)
+    key = cv2.waitKey(1)
 
     i += 1
     if key == ord("\x1b"):  # End stream when pressing ESC
@@ -118,17 +118,17 @@ pipeline.stop()
 vid.release()
 cv2.destroyAllWindows()
 
-with open(f"Data/Output/Dataset/Metadata/Metadata_3D.txt", "w") as metadata_file_1:
-    metadata_file_1.write(json.dumps(metadata_3D))
-
-with open(f"Data/Output/Dataset/Metadata/Metadata_RGB.txt", "w") as metadata_file_2:
-    metadata_file_2.write(json.dumps(metadata_RGB))
-
-# with open(f"../dataset/new/vozidlo5/Metadata_3D.txt", "w") as metadata_file_1:
+# with open(f"Data/Output/Dataset/Metadata/Metadata_3D.txt", "w") as metadata_file_1:
 #     metadata_file_1.write(json.dumps(metadata_3D))
 #
-# with open(f"../dataset/new/vozidlo5/Metadata_RGB.txt", "w") as metadata_file_2:
+# with open(f"Data/Output/Dataset/Metadata/Metadata_RGB.txt", "w") as metadata_file_2:
 #     metadata_file_2.write(json.dumps(metadata_RGB))
+
+with open(f"../dataset/new_3D_Up/vozidlo3/Metadata_3D.txt", "w") as metadata_file_1:
+    metadata_file_1.write(json.dumps(metadata_3D))
+
+with open(f"../dataset/new_3D_Up/vozidlo3/Metadata_RGB.txt", "w") as metadata_file_2:
+    metadata_file_2.write(json.dumps(metadata_RGB))
 
 print(metadata_3D)
 print(metadata_RGB)

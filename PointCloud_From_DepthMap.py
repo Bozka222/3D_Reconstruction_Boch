@@ -4,10 +4,6 @@ import open3d as o3d
 from matplotlib import pyplot as plt
 
 
-# =====================================
-# Function declarations
-# =====================================
-
 # Function to create point cloud file
 def create_output(vertices, colors, filename):
     colors = colors.reshape(-1, 3)
@@ -30,22 +26,6 @@ def create_output(vertices, colors, filename):
         np.savetxt(f, vertices, '%f %f %f %d %d %d')
 
 
-# Function that Down samples image x number (reduce_factor) of times.
-def down_sample_image(image, reduce_factor):
-    for i in range(0, reduce_factor):
-        # Check if image is color or grayscale
-        if len(image.shape) > 2:
-            row, col = image.shape[:2]
-        else:
-            row, col = image.shape
-
-        image = cv2.pyrDown(image, dstsize=(col // 2, row // 2))
-    return image
-
-
-# =========================================================
-# Stereo 3D reconstruction
-# =========================================================
 # Camera parameters to undistort and rectify images
 cv_file = cv2.FileStorage()
 cv_file.open('Data/Input/stereoMap.xml', cv2.FileStorage_READ)
@@ -75,15 +55,6 @@ imgL = cv2.remap(imgL, stereoMapL_x, stereoMapL_y, cv2.INTER_LANCZOS4, cv2.BORDE
 cv2.imshow("frame right", imgR)
 cv2.imshow("frame left", imgL)
 cv2.waitKey(0)
-
-# Down_sample each image 3 times (because they're too big)
-# imgL = down_sample_image(imgL, 2)
-# imgR = down_sample_image(imgR, 2)
-#
-# cv2.imshow("frame right", imgR)
-# cv2.imshow("frame left", imgL)
-#
-# cv2.waitKey(0)
 
 # Create Block matching object.
 window_size = 0

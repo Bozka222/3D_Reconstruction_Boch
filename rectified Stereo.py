@@ -18,7 +18,7 @@ config.enable_stream(rs.stream.color, 1280, 720, format=rs.format.bgr8, framerat
 profile = pipeline.start(config)
 
 # Set RGB Image camera
-cap = cv2.VideoCapture(3, cv2.CAP_DSHOW)
+cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 cap.set(cv2.CAP_PROP_FPS, 15)
@@ -32,8 +32,8 @@ while cap.isOpened():
     success, frame_right = cap.read()
 
     cropped_img = frame_right[0:720, 0:1280]
-    rotated_image_R = cv2.rotate(cropped_img, cv2.ROTATE_90_CLOCKWISE)
-    rotated_image_L = cv2.rotate(frame_left, cv2.ROTATE_90_CLOCKWISE)
+    rotated_image_R = cv2.rotate(cropped_img, cv2.ROTATE_90_COUNTERCLOCKWISE)
+    rotated_image_L = cv2.rotate(frame_left, cv2.ROTATE_90_COUNTERCLOCKWISE)
 
     # # Undistorted and rectify images
     frame_right = cv2.remap(rotated_image_R, stereoMapR_x, stereoMapR_y, cv2.INTER_LANCZOS4, cv2.BORDER_CONSTANT, 0)

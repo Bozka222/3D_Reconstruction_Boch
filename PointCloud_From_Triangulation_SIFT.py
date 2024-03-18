@@ -57,6 +57,8 @@ imgL = cv2.remap(imgL, stereoMapL_x, stereoMapL_y, cv2.INTER_LANCZOS4, cv2.BORDE
 # Show the frames
 cv2.imshow("frame right", imgR)
 cv2.imshow("frame left", imgL)
+cv2.imwrite("Data/Output/Frame_Right.jpg", imgR)
+cv2.imwrite("Data/Output/Frame_Left.jpg", imgL)
 cv2.waitKey(0)
 
 # Detect the SIFT key points and compute the descriptors for the two images

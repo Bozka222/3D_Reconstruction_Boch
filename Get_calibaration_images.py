@@ -9,12 +9,12 @@ config.enable_stream(rs.stream.color, 1280, 720, format=rs.format.bgr8, framerat
 profile = pipeline.start(config)
 
 # Set RGB Image camera
-cap = cv2.VideoCapture(3, cv2.CAP_DSHOW)
+cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 cap.set(cv2.CAP_PROP_FPS, 15)
 
-num = 8
+num = 0
 
 while cap.isOpened():
 
@@ -25,16 +25,16 @@ while cap.isOpened():
     success, img = cap.read()
     # new_img = cv2.resize(img, (1280, 720))
     cropped_img = img[0:720, 0:1280]
-    rotated_image_R = cv2.rotate(cropped_img, cv2.ROTATE_90_CLOCKWISE)
-    rotated_image_L = cv2.rotate(color_image, cv2.ROTATE_90_CLOCKWISE)
+    rotated_image_R = cv2.rotate(cropped_img, cv2.ROTATE_90_COUNTERCLOCKWISE)
+    rotated_image_L = cv2.rotate(color_image, cv2.ROTATE_90_COUNTERCLOCKWISE)
 
     k = cv2.waitKey(5)
 
     if k == 27:
         break
     elif k == ord('s'):  # wait for 's' key to save and exit
-        cv2.imwrite('Data/Input/Camera_Calibration_Images/stereoLeft2/imageL' + str(num) + '.png', rotated_image_L)
-        cv2.imwrite('Data/Input/Camera_Calibration_Images/stereoRight2/imageR' + str(num) + '.png', rotated_image_R)
+        cv2.imwrite('Data/Input/Camera_Calibration_Images/stereoLeft/imageL' + str(num) + '.png', rotated_image_L)
+        cv2.imwrite('Data/Input/Camera_Calibration_Images/stereoRight/imageR' + str(num) + '.png', rotated_image_R)
         # cv2.imwrite('Data/Input/Deformed/imageL' + str(num) + '.png', rotated_image_L)
         # cv2.imwrite('Data/Input/Deformed/imageR' + str(num) + '.png', rotated_image_R)
         print("images saved!")
