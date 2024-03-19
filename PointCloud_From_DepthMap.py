@@ -35,11 +35,11 @@ stereoMapL_y = cv_file.getNode('stereoMapL_y').mat()
 stereoMapR_x = cv_file.getNode('stereoMapR_x').mat()
 stereoMapR_y = cv_file.getNode('stereoMapR_y').mat()
 
-Q = cv_file.getNode('q').mat()
+Q = cv_file.getNode('Q').mat()
 print(Q)
 
-imgL = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Left_Image/Stereo_Left_Image4.jpg')
-imgR = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image0.jpg')
+imgL = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Left_Image/Stereo_Left_Image3.jpg')
+imgR = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image4.jpg')
 
 # Show the frames
 cv2.imshow("frame right", imgR)
@@ -97,6 +97,7 @@ disparity_map = stereo.compute(imgL, imgR).astype(np.float32) / 16.0
 plt.imshow(disparity_map, 'gray')
 plt.colorbar()
 plt.show()
+plt.imsave('Data/Output/DepthMap_1.png', disparity_map)
 
 # Get new down_sampled width and height
 h, w = imgR.shape[:2]

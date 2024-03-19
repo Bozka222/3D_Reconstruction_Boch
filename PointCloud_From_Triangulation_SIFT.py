@@ -39,8 +39,11 @@ P1 = cv_file.getNode('PL').mat()
 P2 = cv_file.getNode('PR').mat()
 F = cv_file.getNode('F').mat()
 
-imgL = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Left_Image/Stereo_Left_Image3.jpg', cv2.IMREAD_GRAYSCALE)
-imgR = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image4.jpg', cv2.IMREAD_GRAYSCALE)
+# imgL = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Left_Image/Stereo_Left_Image3.jpg', cv2.IMREAD_GRAYSCALE)
+# imgR = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image4.jpg', cv2.IMREAD_GRAYSCALE)
+
+imgL = cv2.imread('Data/Input/Images_Without_BG/Stereo_Left_Image4.png', cv2.IMREAD_GRAYSCALE)
+imgR = cv2.imread('Data/Input/Images_Without_BG/Stereo_Right_Image5.png', cv2.IMREAD_GRAYSCALE)
 
 # imgL = cv2.imread('Data/Input/Camera_Calibration_Images/testing_chessboard/stereoLeft/Im_L_1.png', cv2.IMREAD_GRAYSCALE)
 # imgR = cv2.imread('Data/Input/Camera_Calibration_Images/testing_chessboard/stereoRight/Im_R_1.png', cv2.IMREAD_GRAYSCALE)
@@ -57,8 +60,8 @@ imgL = cv2.remap(imgL, stereoMapL_x, stereoMapL_y, cv2.INTER_LANCZOS4, cv2.BORDE
 # Show the frames
 cv2.imshow("frame right", imgR)
 cv2.imshow("frame left", imgL)
-cv2.imwrite("Data/Output/Frame_Right.jpg", imgR)
-cv2.imwrite("Data/Output/Frame_Left.jpg", imgL)
+# cv2.imwrite("Data/Output/Frame_Right.jpg", imgR)
+# cv2.imwrite("Data/Output/Frame_Left.jpg", imgL)
 cv2.waitKey(0)
 
 # Detect the SIFT key points and compute the descriptors for the two images
@@ -158,6 +161,6 @@ for i in range(len(point_color)):
 # add position and color to point cloud
 pcd.points = o3d.utility.Vector3dVector(pc_points)
 pcd.colors = o3d.utility.Vector3dVector(pc_color)
-o3d.visualization.draw_geometries([pcd])
+o3d.visualization.draw_geometries([pcd], window_name="Stereo point cloud", width=1280, height=720)
 o3d.io.write_point_cloud("Data/Output/PointClouds/SIFT.ply", pcd, format="PLY")
 cv2.destroyAllWindows()

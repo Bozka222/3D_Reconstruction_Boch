@@ -103,11 +103,11 @@ while True:
     # cv2.imwrite(f"Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image{i}.jpg", rotated_RGB_image)
     # key = cv2.waitKey(1)
 
-    vertices.astype("float32").tofile(f"../dataset/new_3D_Up/vozidlo3/Raw_Depth{i}.raw")
-    cv2.imwrite(f"../dataset/new_3D_Up/vozidlo3/Raw_Color{i}.jpg", blue_image)
-    cv2.imwrite(f"../dataset/new_3D_Up/vozidlo3/Depth_Color_Image{i}.jpg", rotated_depth_colormap)
-    cv2.imwrite(f"../dataset/new_3D_Up/vozidlo3/Stereo_Left_Image{i}.jpg", rotated_color_image)
-    cv2.imwrite(f"../dataset/new_3D_Up/vozidlo3/Stereo_Right_Image{i}.jpg", rotated_RGB_image)
+    vertices.astype("float32").tofile(f"../dataset/new_3D_Up/second_try/vozidlo1/Raw_Depth{i}.raw")
+    cv2.imwrite(f"../dataset/new_3D_Up/second_try/vozidlo1/Raw_Color{i}.jpg", blue_image)
+    cv2.imwrite(f"../dataset/new_3D_Up/second_try/vozidlo1/Depth_Color_Image{i}.jpg", rotated_depth_colormap)
+    cv2.imwrite(f"../dataset/new_3D_Up/second_try/vozidlo1/Stereo_Left_Image{i}.jpg", rotated_color_image)
+    cv2.imwrite(f"../dataset/new_3D_Up/second_try/vozidlo1/Stereo_Right_Image{i}.jpg", rotated_RGB_image)
     key = cv2.waitKey(1)
 
     i += 1
@@ -124,10 +124,10 @@ cv2.destroyAllWindows()
 # with open(f"Data/Output/Dataset/Metadata/Metadata_RGB.txt", "w") as metadata_file_2:
 #     metadata_file_2.write(json.dumps(metadata_RGB))
 
-with open(f"../dataset/new_3D_Up/vozidlo3/Metadata_3D.txt", "w") as metadata_file_1:
+with open(f"../dataset/new_3D_Up/second_try/vozidlo1/Metadata_3D.txt", "w") as metadata_file_1:
     metadata_file_1.write(json.dumps(metadata_3D))
 
-with open(f"../dataset/new_3D_Up/vozidlo3/Metadata_RGB.txt", "w") as metadata_file_2:
+with open(f"../dataset/new_3D_Up/second_try/vozidlo1/Metadata_RGB.txt", "w") as metadata_file_2:
     metadata_file_2.write(json.dumps(metadata_RGB))
 
 print(metadata_3D)

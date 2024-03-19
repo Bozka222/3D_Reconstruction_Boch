@@ -10,8 +10,8 @@ stereoMapR_x = cv_file.getNode('stereoMapR_x').mat()
 stereoMapR_y = cv_file.getNode('stereoMapR_y').mat()
 Q = cv_file.getNode('q').mat()
 
-imgL = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Left_Image/Stereo_Left_Image29.jpg')
-imgR = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image30.jpg')
+imgL = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Left_Image/Stereo_Left_Image3.jpg')
+imgR = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image4.jpg')
 
 # Show the frames
 # cv2.imshow("frame right", imgR)
@@ -34,35 +34,35 @@ def nothing(x):
     pass
 
 
-cv2.namedWindow('disp', cv2.WINDOW_NORMAL)
-cv2.resizeWindow('disp', 720, 1280)
+cv2.namedWindow('DepthMap_Tuning', cv2.WINDOW_NORMAL)
+cv2.resizeWindow('DepthMap_Tuning', 720, 1280)
 
-cv2.createTrackbar('minDisparity', 'disp', 0, 100, nothing)
-cv2.createTrackbar('numDisparities', 'disp', 1, 17, nothing)
-cv2.createTrackbar('blockSize', 'disp', 0, 21, nothing)
-cv2.createTrackbar('disp12MaxDiff', 'disp', 12, 100, nothing)
-cv2.createTrackbar('preFilterCap', 'disp', 63, 63, nothing)
-cv2.createTrackbar('uniquenessRatio', 'disp', 1, 100, nothing)
-cv2.createTrackbar('speckleWindowSize', 'disp', 1, 200, nothing)
-cv2.createTrackbar('speckleRange', 'disp', 2, 100, nothing)
-cv2.createTrackbar('P1', 'disp', 5, 100, nothing)
-cv2.createTrackbar('P2', 'disp', 32, 100, nothing)
+cv2.createTrackbar('minDisparity', 'DepthMap_Tuning', 0, 100, nothing)
+cv2.createTrackbar('numDisparities', 'DepthMap_Tuning', 1, 17, nothing)
+cv2.createTrackbar('blockSize', 'DepthMap_Tuning', 0, 21, nothing)
+cv2.createTrackbar('disp12MaxDiff', 'DepthMap_Tuning', 12, 100, nothing)
+cv2.createTrackbar('preFilterCap', 'DepthMap_Tuning', 63, 63, nothing)
+cv2.createTrackbar('uniquenessRatio', 'DepthMap_Tuning', 1, 100, nothing)
+cv2.createTrackbar('speckleWindowSize', 'DepthMap_Tuning', 2, 200, nothing)
+cv2.createTrackbar('speckleRange', 'DepthMap_Tuning', 2, 100, nothing)
+cv2.createTrackbar('P1', 'DepthMap_Tuning', 5, 100, nothing)
+cv2.createTrackbar('P2', 'DepthMap_Tuning', 32, 100, nothing)
 
 # Creating an object of StereoBM algorithm
 stereo = cv2.StereoSGBM.create()
 
 while True:
     # Updating the parameters based on the trackbar positions
-    numDisparities = cv2.getTrackbarPos('numDisparities', 'disp') * 16
-    blockSize = cv2.getTrackbarPos('blockSize', 'disp') * 2 + 1
-    preFilterCap = cv2.getTrackbarPos('preFilterCap', 'disp')
-    uniquenessRatio = cv2.getTrackbarPos('uniquenessRatio', 'disp')
-    speckleRange = cv2.getTrackbarPos('speckleRange', 'disp')
-    speckleWindowSize = cv2.getTrackbarPos('speckleWindowSize', 'disp')
-    disp12MaxDiff = cv2.getTrackbarPos('disp12MaxDiff', 'disp')
-    minDisparity = cv2.getTrackbarPos('minDisparity', 'disp') * (-1)
-    P1 = cv2.getTrackbarPos('P1', 'disp') * 3 * blockSize ** 2
-    P2 = cv2.getTrackbarPos('P2', 'disp') * 3 * blockSize ** 2
+    numDisparities = cv2.getTrackbarPos('numDisparities', 'DepthMap_Tuning') * 16
+    blockSize = cv2.getTrackbarPos('blockSize', 'DepthMap_Tuning') * 2 + 1
+    preFilterCap = cv2.getTrackbarPos('preFilterCap', 'DepthMap_Tuning')
+    uniquenessRatio = cv2.getTrackbarPos('uniquenessRatio', 'DepthMap_Tuning')
+    speckleRange = cv2.getTrackbarPos('speckleRange', 'DepthMap_Tuning')
+    speckleWindowSize = cv2.getTrackbarPos('speckleWindowSize', 'DepthMap_Tuning')
+    disp12MaxDiff = cv2.getTrackbarPos('disp12MaxDiff', 'DepthMap_Tuning')
+    minDisparity = cv2.getTrackbarPos('minDisparity', 'DepthMap_Tuning') * (-1)
+    P1 = cv2.getTrackbarPos('P1', 'DepthMap_Tuning') * 3 * blockSize ** 2
+    P2 = cv2.getTrackbarPos('P2', 'DepthMap_Tuning') * 3 * blockSize ** 2
 
     # Setting the updated parameters before computing disparity map
     stereo.setNumDisparities(numDisparities)
@@ -96,8 +96,8 @@ while True:
     # disparity_map_color = cv2.applyColorMap(disparity_map_normalized, cv2.COLORMAP_JET)
 
     # Displaying the disparity map
-    cv2.imshow("disp", disparity)
-    cv2.imwrite("Data/Output/Disparity_Map/disp_01.png", disparity)
+    cv2.imshow("DepthMap", disparity)
+    cv2.imwrite("Data/Output/DepthMap_1.png", disparity)
 
     # Close window using esc key
     if cv2.waitKey(1) == 27:
