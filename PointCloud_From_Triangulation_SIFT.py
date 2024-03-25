@@ -10,19 +10,14 @@ def drawlines(img1, img2, lines, pts1, pts2):
     img2 = cv2.cvtColor(img2, cv2.COLOR_GRAY2BGR)
 
     for r, pt1, pt2 in zip(lines, pts1, pts2):
-        color = tuple(np.random.randint(0, 255,
-                                        3).tolist())
+        color = tuple(np.random.randint(0, 255, 3).tolist())
 
         x0, y0 = map(int, [0, -r[2] / r[1]])
-        x1, y1 = map(int,
-                     [c, -(r[2] + r[0] * c) / r[1]])
+        x1, y1 = map(int, [c, -(r[2] + r[0] * c) / r[1]])
 
-        img1 = cv2.line(img1,
-                        (x0, y0), (x1, y1), color, 1)
-        img1 = cv2.circle(img1,
-                          tuple(pt1), 5, color, -1)
-        img2 = cv2.circle(img2,
-                          tuple(pt2), 5, color, -1)
+        img1 = cv2.line(img1, (x0, y0), (x1, y1), color, 1)
+        img1 = cv2.circle(img1, tuple(pt1), 5, color, -1)
+        img2 = cv2.circle(img2, tuple(pt2), 5, color, -1)
     return img1, img2
 
 
@@ -39,14 +34,11 @@ P1 = cv_file.getNode('PL').mat()
 P2 = cv_file.getNode('PR').mat()
 F = cv_file.getNode('F').mat()
 
-# imgL = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Left_Image/Stereo_Left_Image3.jpg', cv2.IMREAD_GRAYSCALE)
-# imgR = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image4.jpg', cv2.IMREAD_GRAYSCALE)
+imgL = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Left_Image/Stereo_Left_Image3.jpg', cv2.IMREAD_GRAYSCALE)
+imgR = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image4.jpg', cv2.IMREAD_GRAYSCALE)
 
-imgL = cv2.imread('Data/Input/Images_Without_BG/Stereo_Left_Image4.png', cv2.IMREAD_GRAYSCALE)
-imgR = cv2.imread('Data/Input/Images_Without_BG/Stereo_Right_Image5.png', cv2.IMREAD_GRAYSCALE)
-
-# imgL = cv2.imread('Data/Input/Camera_Calibration_Images/testing_chessboard/stereoLeft/Im_L_1.png', cv2.IMREAD_GRAYSCALE)
-# imgR = cv2.imread('Data/Input/Camera_Calibration_Images/testing_chessboard/stereoRight/Im_R_1.png', cv2.IMREAD_GRAYSCALE)
+# imgL = cv2.imread('Data/Input/Images_Without_BG/Stereo_Left_Image4.png', cv2.IMREAD_GRAYSCALE)
+# imgR = cv2.imread('Data/Input/Images_Without_BG/Stereo_Right_Image5.png', cv2.IMREAD_GRAYSCALE)
 
 # Show the frames
 cv2.imshow("frame right", imgR)
@@ -82,7 +74,6 @@ matches = flann.knnMatch(descriptorsLeft, descriptorsRight, k=2)
 good = []
 pts1 = []
 pts2 = []
-print(matches)
 
 # Get Matched points under distance's threshold
 for i, (m, n) in enumerate(matches):
@@ -97,7 +88,7 @@ cv2.imshow("Matches", img_matched)
 cv2.waitKey(0)
 
 # Print number of matched feature points
-print('Matched Num:', len(pts1))
+print('Matched Num:', len(good))
 
 # Set array for keypoints
 pts1 = np.array(pts1)
@@ -114,8 +105,9 @@ lines2 = lines2.reshape(-1, 3)
 img3, img4 = drawlines(imgL, imgR, lines2, np.int32(pts1), np.int32(pts2))
 
 plt.subplot(121), plt.imshow(img5)
-plt.subplot(122), plt.imshow(img3)
+plt.subplot(122), plt.imshow(img6)
 plt.show()
+# plt.imsave("Data/Output/PointClouds/Triangulation_Points2.png", img6)
 
 # Triangulation
 pts1 = np.transpose(pts1)

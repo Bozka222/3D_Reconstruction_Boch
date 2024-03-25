@@ -185,7 +185,7 @@ if __name__ == "__main__":
             points_3d = cv.triangulatePoints(P1, P2, pts1, pts2)
             points_3d /= points_3d[3]
 
-            # P2, points_3D = bundle_adjustment(points_3d, pts2, resized_img, P2)
+            P2, points_3d = bundle_adjustment(points_3d, pts2, resized_img, P2)
             opt_variables = np.hstack((P2.ravel(), points_3d.ravel(order="F")))
             num_points = len(pts2[0])
             rep_error_fn(opt_variables, pts2, num_points)

@@ -10,19 +10,14 @@ def drawlines(img1, img2, lines, pts1, pts2):
     img2 = cv2.cvtColor(img2, cv2.COLOR_GRAY2BGR)
 
     for r, pt1, pt2 in zip(lines, pts1, pts2):
-        color = tuple(np.random.randint(0, 255,
-                                        3).tolist())
+        color = tuple(np.random.randint(0, 255, 3).tolist())
 
         x0, y0 = map(int, [0, -r[2] / r[1]])
-        x1, y1 = map(int,
-                     [c, -(r[2] + r[0] * c) / r[1]])
+        x1, y1 = map(int, [c, -(r[2] + r[0] * c) / r[1]])
 
-        img1 = cv2.line(img1,
-                        (x0, y0), (x1, y1), color, 1)
-        img1 = cv2.circle(img1,
-                          tuple(pt1), 5, color, -1)
-        img2 = cv2.circle(img2,
-                          tuple(pt2), 5, color, -1)
+        img1 = cv2.line(img1, (x0, y0), (x1, y1), color, 1)
+        img1 = cv2.circle(img1, tuple(pt1), 5, color, -1)
+        img2 = cv2.circle(img2, tuple(pt2), 5, color, -1)
     return img1, img2
 
 
@@ -39,11 +34,11 @@ P1 = cv_file.getNode('PL').mat()
 P2 = cv_file.getNode('PR').mat()
 F = cv_file.getNode('F').mat()
 
-# imgL = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Left_Image/Stereo_Left_Image3.jpg', cv2.IMREAD_GRAYSCALE)
-# imgR = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image4.jpg', cv2.IMREAD_GRAYSCALE)
+imgL = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Left_Image/Stereo_Left_Image3.jpg', cv2.IMREAD_GRAYSCALE)
+imgR = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image4.jpg', cv2.IMREAD_GRAYSCALE)
 
-imgL = cv2.imread('Data/Input/Images_Without_BG/Stereo_Left_Image4.png', cv2.IMREAD_GRAYSCALE)
-imgR = cv2.imread('Data/Input/Images_Without_BG/Stereo_Right_Image5.png', cv2.IMREAD_GRAYSCALE)
+# imgL = cv2.imread('Data/Input/Images_Without_BG/Stereo_Left_Image3.png', cv2.IMREAD_GRAYSCALE)
+# imgR = cv2.imread('Data/Input/Images_Without_BG/Stereo_Right_Image4.png', cv2.IMREAD_GRAYSCALE)
 
 # Show the frames
 cv2.imshow("frame right", imgR)
@@ -62,7 +57,7 @@ cv2.waitKey(0)
 # Detect the SIFT key points and compute the descriptors for the two images
 orb = cv2.BRISK.create()
 
-# FREAK FEATURE DESCRIPTOR
+# # FREAK FEATURE DESCRIPTOR
 # freak = cv2.xfeatures2d.FREAK.create()
 # star = cv2.xfeatures2d.StarDetector.create()
 # keyPointsLeft = star.detect(imgL, None)
@@ -71,7 +66,6 @@ orb = cv2.BRISK.create()
 # keyPointsRight, descriptorsRight = freak.compute(imgR, keyPointsRight)
 
 # # BRIEF DETECTOR
-# # Initiate FAST detector
 # star = cv2.xfeatures2d.StarDetector.create()
 # # Initiate BRIEF extractor
 # brief = cv2.xfeatures2d.BriefDescriptorExtractor.create()
