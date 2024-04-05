@@ -38,8 +38,8 @@ stereoMapR_y = cv_file.getNode('stereoMapR_y').mat()
 Q = cv_file.getNode('Q').mat()
 print(Q)
 
-imgL = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Left_Image/Stereo_Left_Image3.jpg')
-imgR = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image4.jpg')
+imgL = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Left_Image/Stereo_Left_Image44.jpg')
+imgR = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image44.jpg')
 
 # Show the frames
 cv2.imshow("frame right", imgR)

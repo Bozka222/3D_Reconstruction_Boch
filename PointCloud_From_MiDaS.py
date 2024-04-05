@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import open3d as o3d
 import glob
+import matplotlib.pyplot as plt
 
 
 def create_output(vertices, colors, filename):
@@ -43,6 +44,7 @@ for depth_map, color_image in zip(depth_maps, color_images):
     depthmap = cv2.imread(depth_map, cv2.IMREAD_GRAYSCALE).astype(np.float32)
     output = cv2.normalize(depthmap, None, 0, 1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32FC1)
     # plt.imshow(output)
+    # plt.imsave(f"Data/Output/PointClouds/MiDaS_Depth/MiDaS_Color_{i}.png", output)
     # plt.show()
 
     # Reproject points into 3D

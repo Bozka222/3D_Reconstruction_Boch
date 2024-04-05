@@ -34,8 +34,8 @@ P1 = cv_file.getNode('PL').mat()
 P2 = cv_file.getNode('PR').mat()
 F = cv_file.getNode('F').mat()
 
-imgL = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Left_Image/Stereo_Left_Image3.jpg', cv2.IMREAD_GRAYSCALE)
-imgR = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image4.jpg', cv2.IMREAD_GRAYSCALE)
+imgL = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Left_Image/Stereo_Left_Image44.jpg', cv2.IMREAD_GRAYSCALE)
+imgR = cv2.imread('Data/Output/Dataset/Stereo_Data/Stereo_Right_Image/Stereo_Right_Image44.jpg', cv2.IMREAD_GRAYSCALE)
 
 # imgL = cv2.imread('Data/Input/Images_Without_BG/Stereo_Left_Image3.png', cv2.IMREAD_GRAYSCALE)
 # imgR = cv2.imread('Data/Input/Images_Without_BG/Stereo_Right_Image4.png', cv2.IMREAD_GRAYSCALE)
@@ -55,7 +55,7 @@ cv2.imshow("frame left", imgL)
 cv2.waitKey(0)
 
 # Detect the SIFT key points and compute the descriptors for the two images
-orb = cv2.BRISK.create()
+orb = cv2.ORB.create()
 
 # # FREAK FEATURE DESCRIPTOR
 # freak = cv2.xfeatures2d.FREAK.create()
